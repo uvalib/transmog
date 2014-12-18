@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<structure>
+  <name>test</name>
+  <description>A simple test structure.</description>
+  <rootNodeTypeId>ROOT</rootNodeTypeId>
+  <nodeTypes>
+    <nodeType>
+      <id>ROOT</id>
+      <label>root</label>
+      <description>The entire document.</description>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>A</canHaveChild>
+      <canHaveChild>B</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>A</id>
+      <label>A</label>
+      <description>An 'A'-type element.</description>
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>B</id>
+      <label>B</label>
+      <description>A 'B'-type element.</description>
+      <isTextNode>true</isTextNode>
+    </nodeType>
+  </nodeTypes>
+</structure>

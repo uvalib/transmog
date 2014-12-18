@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<structure>
+  <name>EAD encoding for Virginia Heritage Site</name>
+  <description>A simple structure for organizing text into UVA-compliant EAD xml
+    files.</description>
+  <transformation>uvaead-schema.xsl</transformation>
+  <rootNodeTypeId>DOCUMENT</rootNodeTypeId>
+
+  <rules>
+    <rule>
+      <description>when there's an unindented block with "Scope and Content" the following indented
+        paragraphs should be marked up as scope and content</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Scope and Content\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="SCOPECONTENT">
+          <!--<assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Arrangement</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Arrangement\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="ARRANGEMENT">
+          <!--<assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Acquisition Information</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Acquisition Information\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="ACQINFO">
+          <!--<assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Preferred Citation</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Preferred Citation\s*</elementmatch>
+          <elementmatch type="pattern" id="paragraph">.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="PREFERCITE">
+          <!--<assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+
+    <rule>
+      <description>Access and Use restrictions</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Access and Use Restrictions\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="ACCESSRESTRICT">
+          <!-- <assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Access restrictions</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Access Restrictions\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="ACCESSRESTRICT">
+          <!-- <assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Use restrictions</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Use Restrictions\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="USERESTRICT">
+          <!-- <assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+
+
+    <rule>
+      <description>Biographical Information</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">(Biographical Information\s*)|(Biographical/Historical Information\s)</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BIOGHIST">
+          <!--<assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Biographical Information, really leanient</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Biographical Information\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BIOGHIST">
+          <!--<assign matchedId="head" path="HEAD"/>-->
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+  </rules>
+
+  <nodeTypes>
+    <!-- Labels start on DACS manual page 179: http://files.archivists.org/pubs/DACS2E-2013.pdf -->
+    <nodeType>
+      <id>DOCUMENT</id>
+      <label>Finding Aid</label>
+      <description>This represents the entire finding aid.</description>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>TITLEPROPER</canHaveChild>
+      <canHaveChild>SUBTITLE</canHaveChild>
+      <canHaveChild>ARCHIVIST</canHaveChild>
+      <canHaveChild>MSS_NUM</canHaveChild>
+      <canHaveChild>USERESTRICT</canHaveChild>
+      <canHaveChild>ACCESSRESTRICT</canHaveChild>
+      <canHaveChild>PREFERCITE</canHaveChild>
+      <canHaveChild>BIOGHIST</canHaveChild>
+      <canHaveChild>ACQINFO</canHaveChild>
+      <canHaveChild>SCOPECONTENT</canHaveChild>
+      <canHaveChild>ARRANGEMENT</canHaveChild>
+      <canHaveChild>CONTENTLIST</canHaveChild>
+      <canHaveChild>SERIES</canHaveChild>
+      <canHaveChild>ITEM</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>TITLEPROPER</id>
+      <label>Title</label>
+      <description>This element provides a word or phrase by which the material being described is known or can be identified.  A title may be devised or formal.</description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>DATE</canHaveChild>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>ARCHIVIST</id>
+      <label>Archivist</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>MSS_NUM</id>
+      <label>Manuscript Number</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>DATE</id>
+      <label>Date</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>UNITDATE</id>
+      <label>Date</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>SUBTITLE</id>
+      <label>Subtitle</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>ACCESSION_NUMBER</canHaveChild>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>ACCESSION_NUMBER</id>
+      <label>Accession Number</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>USERESTRICT</id>
+      <label>Conditions Governing Reproduction and Use</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>CUSTODHIST</id>
+      <label>Custodial History</label>
+      <description />
+      <isTextNode>false</isTextNode>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>LANGMATERIAL</id>
+      <label>Languages and Scripts of the Material</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>ACCESSRESTRICT</id>
+      <label>Conditions Governing Access</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>BIOGHIST</id>
+      <label>Biographical History</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>UNASSIGNED</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>PREFERCITE</id>
+      <label>Citation</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>ACQINFO</id>
+      <label>Immediate Source of Acquisition</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>APPRAISAL</id>
+      <label>Appraisal, Destruction, and Scheduling Information</label>
+      <description />
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>SCOPECONTENT</id>
+      <label>Scope and Content Notes</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>ARRANGEMENT</id>
+      <label>System of Arrangement</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>CONTENTLIST</id>
+      <label>Content List</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>SERIES</id>
+      <label>Series</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>SUBSERIES</canHaveChild>
+      <canHaveChild>UNITTITLE</canHaveChild>
+      <canHaveChild>BOX</canHaveChild>
+      <canHaveChild>FOLDER</canHaveChild>
+      <canHaveChild>BOX_FOLDER</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>UNITTITLE</id>
+      <label>Title</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>UNITDATE</canHaveChild>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>HEAD</id>
+      <label>Heading</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>BOX</id>
+      <label>Box</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>FOLDER</id>
+      <label>Folder</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>BOXFOLDER</id>
+      <label>Box/Folder</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>PARAGRAPH</id>
+      <label>Paragraph</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>SERIES</id>
+      <label>Series</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>SCOPECONTENT</canHaveChild>
+      <canHaveChild>SUBSERIES</canHaveChild>
+      <canHaveChild>ITEM</canHaveChild>
+      <canHaveChild>UNITTITLE</canHaveChild>
+      <canHaveChild>UNITDATE</canHaveChild>
+      <canHaveChild>BOX</canHaveChild>
+      <canHaveChild>BOXFOLDER</canHaveChild>
+      <canHaveChild>FOLDER</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>SUBSERIES</id>
+      <label>Subseries</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>SCOPECONTENT</canHaveChild>
+      <canHaveChild>SUBSERIES</canHaveChild>
+      <canHaveChild>ITEM</canHaveChild>
+      <canHaveChild>UNITTITLE</canHaveChild>
+      <canHaveChild>UNITDATE</canHaveChild>
+      <canHaveChild>BOX</canHaveChild>
+      <canHaveChild>BOXFOLDER</canHaveChild>
+      <canHaveChild>FOLDER</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>ITEM</id>
+      <label>Item</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>UNITTITLE</canHaveChild>
+      <canHaveChild>UNITDATE</canHaveChild>
+      <canHaveChild>BOX</canHaveChild>
+      <canHaveChild>BOXFOLDER</canHaveChild>
+      <canHaveChild>FOLDER</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>TEXT</id>
+      <label>text</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+      <canHaveChild>UNASSIGNED</canHaveChild>
+    </nodeType>
+  </nodeTypes>
+</structure>
