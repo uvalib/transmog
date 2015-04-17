@@ -92,18 +92,40 @@
             // format the HTML and add labels and functions
             jquery.each(function() {
                 var div = $(this);
+                div.find("span").each(addTextEditLinks);
+
                 if (div.hasClass('UNASSIGNED')) {
                     addToolbarForUnassigned(div);
                 } else if (div.hasClass('ASSIGNED')) {
                     addToolbarForAssigned(div);
                 } else if (div.hasClass('UNASSIGNED_TABLE')) {
                     addToolbarForTable(div);
-
                 }
             });
 
             // attach assignment handler
             $('.type-assignment', jquery).change(assignType);
+        }
+
+
+        function addTextEditLinks() {
+            var span = $(this);
+            span.html("<a href=\"javascript:noop()\">" + span.text() + "</a>");
+            span.find("a").click(function() {
+                var link = $(this);
+                var contents = link.text();
+                var partId = link.parent().parent().attr("id");
+                var fragmentId = link.parent().attr("id");
+                var newValue = prompt("Edit this value", contents);
+                if (newValue != null) {
+                    $.ajax({
+                        type: "PUT",
+                        url: "service/findingaids/" + openDocumentId + "/" + partId + "/" + fragmentId,
+                        data: newValue,
+                        success: replaceDocumentElement
+                    });
+                }
+            });
         }
 
         function addDropZones(div) {
@@ -147,7 +169,6 @@
             $.ajax({
                 type: "MOVE",
                 url: "service/findingaids/" +openDocumentId + "/" + partId + "?newParent=" + newParentId + "&index=" + index,
-                data: ui.draggable.find("textarea").val(),
                 success: function(htmlFragment) {
                     ui.draggable.remove();
                     replaceDocumentElement(htmlFragment);
@@ -159,7 +180,7 @@
             var type = getPartType($(div));
             var label = getLabel(type);
             if (div.find(".ASSIGNED, .UNASSIGNED").size() == 0) {
-                div.prepend('<div class="top-bar"><span class="section-label">' + label + '</span> <a href="javascript:noop()" class="reassign">(edit)</a> <a href="javascript:noop()" class="insert">(add child)</a></div>');
+                div.prepend('<div class="top-bar"><span class="section-label">' + label + '</span> <a href="javascript:noop()" class="reassign">(reassign)</a> <a href="javascript:noop()" class="insert">(add child)</a></div>');
                 div.find('>.top-bar>.reassign').click(function() {
                     var link = $(this);
                     var partId = link.parent().parent().attr('id');
@@ -192,9 +213,7 @@
         }
 
         function addToolbarForUnassigned(div) {
-            var contents = div.text();
             var parentType = getPartType(div.parent());
-            div.html("<textarea>" + contents + "</textarea>");
 
             var toolbar = '<div class="top-bar"><select class="type-assignment"><option>Select type...</option>';
             if (parentType in schema) {
@@ -323,7 +342,6 @@
             $.ajax({
                 type: canContainText ? "PUT" : "POST",
                 url: "service/findingaids/" +openDocumentId + "/" + partId + "?type=" + selectedType,
-                data: link.parent().parent().find("textarea").val(),
                 success: replaceDocumentElement
             });
             return;

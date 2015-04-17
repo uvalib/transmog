@@ -95,7 +95,7 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
             if (!el.isUnassigned()) {
                 return false;
             } else {
-                final boolean matches = p.matcher(el.getContent()).matches();
+                final boolean matches = p.matcher(el.getContentAsString()).matches();
                 return matches;
             }
         }

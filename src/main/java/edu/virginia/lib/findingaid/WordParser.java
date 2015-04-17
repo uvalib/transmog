@@ -1,7 +1,7 @@
 package edu.virginia.lib.findingaid;
 
 import edu.virginia.lib.findingaid.structure.Element;
-import edu.virginia.lib.findingaid.structure.FindingAidBuilder;
+import edu.virginia.lib.findingaid.structure.Fragment;
 import edu.virginia.lib.findingaid.structure.Schema;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hwpf.HWPFDocument;
@@ -18,20 +18,14 @@ import java.io.IOException;
 
 public class WordParser {
 
-    private MarkupAssigner markupAssigner;
-
-    public void setMarkupAssigner(MarkupAssigner m) {
-        markupAssigner = m;
-    }
-
     public Element processDocument(File f, Schema s) {
         try {
             try {
                 XWPFDocument d = new XWPFDocument(new FileInputStream(f));
-                return processXMLDoc(s, d, f, false);
+                return processXMLDoc(s, d);
             } catch (POIXMLException e) {
                 HWPFDocument wd = new HWPFDocument(new FileInputStream(f));
-                return processWORDDoc(s, wd, f, false);
+                return processWORDDoc(s, wd);
             }
         } catch (Exception e) {
             System.out.println("Could not parse " + f.getName());
@@ -40,55 +34,72 @@ public class WordParser {
         }
     }
 
-    private Element processWORDDoc(Schema schema, HWPFDocument doc, File orig, boolean identifyItalics) throws IOException, XMLStreamException {
-        FindingAidBuilder b = new FindingAidBuilder(schema);
+    /**
+     * A versy simple process for old word documents.  The only structure currently retained
+     * is the paragraphs.
+     */
+    private Element processWORDDoc(Schema schema, HWPFDocument doc) throws IOException, XMLStreamException {
+        Element root = new Element(schema.getRootNodeType());
+
         WordExtractor w = new WordExtractor(doc);
         for (String p : w.getParagraphText()) {
-            markupAssigner.markupText(p, b, MarkupAssigner.BlockType.PARAGRAPH);
+            if (p.trim().length() > 0) {
+                root.addChild(new Element(schema.getUnassignedType(), p));
+            }
         }
-        return b.getDocument();
+
+        return root;
     }
 
-    private Element processXMLDoc(Schema schema, XWPFDocument doc, File orig, boolean identifyItalics) throws IOException, XMLStreamException {
-        FindingAidBuilder b = new FindingAidBuilder(schema);
+    private Element processXMLDoc(Schema schema, XWPFDocument doc) throws IOException, XMLStreamException {
+        Element root = new Element(schema.getRootNodeType());
+
         for (XWPFParagraph p : doc.getParagraphs()) {
-            boolean internalFormatting = false;
+
+            boolean recognizedFormatting = false;
             for (IRunElement i : p.getIRuns()) {
                 XWPFRun r = (XWPFRun) i;
                 if (r.isItalic() || r.isBold()) {
-                    internalFormatting = true;
+                    recognizedFormatting = true;
                     break;
                 }
             }
-            if (internalFormatting && identifyItalics) {
+
+            if (recognizedFormatting) {
+                Element currentEl = new Element(schema.getUnassignedType());
                 StringBuffer plainText = new StringBuffer();
+
                 for (IRunElement i : p.getIRuns()) {
                     XWPFRun r = (XWPFRun) i;
                     if (r.isItalic()) {
                         if (plainText.length() > 0) {
-                            markupAssigner.markupText(plainText.toString(), b, MarkupAssigner.BlockType.NESTED_TEXT);
+                            currentEl.addFragment(Fragment.textFragment(plainText.toString()));
                             plainText = new StringBuffer();
                         }
-                        markupAssigner.markupText(r.toString(), b, MarkupAssigner.BlockType.NESTED_ITALIC);
+                        currentEl.addFragment(Fragment.italicFragment(r.toString()));
                     } else if (r.isBold()) {
                         if (plainText.length() > 0) {
-                            markupAssigner.markupText(plainText.toString(), b, MarkupAssigner.BlockType.NESTED_TEXT);
+                            currentEl.addFragment(Fragment.textFragment(plainText.toString()));
                             plainText = new StringBuffer();
                         }
-                        markupAssigner.markupText(r.toString(), b, MarkupAssigner.BlockType.NESTED_BOLD);
+                        currentEl.addFragment(Fragment.boldFragment(r.toString()));
                     } else {
                         plainText.append(r.toString());
                     }
                 }
                 if (plainText.length() > 0) {
-                    markupAssigner.markupText(plainText.toString(), b, MarkupAssigner.BlockType.NESTED_TEXT);
+                    currentEl.addFragment(Fragment.textFragment(plainText.toString()));
+                }
+                if (currentEl.getContentAsString().trim().length() > 0) {
+                    root.addChild(currentEl);
                 }
             } else {
-                markupAssigner.markupText(p.getText(), b, MarkupAssigner.BlockType.PARAGRAPH);
+                if (p.getText().trim().length() > 0) {
+                    root.addChild(new Element(schema.getUnassignedType(), p.getText()));
+                }
             }
         }
-
-        return b.getDocument();
+        return root;
     }
 
 }

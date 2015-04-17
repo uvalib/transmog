@@ -1,6 +1,5 @@
 package edu.virginia.lib.findingaid.service;
 
-import edu.virginia.lib.findingaid.DefaultMarkupAssigner;
 import edu.virginia.lib.findingaid.WordParser;
 import edu.virginia.lib.findingaid.rules.BlockMatch;
 import edu.virginia.lib.findingaid.rules.Rule;
@@ -21,7 +20,6 @@ public class DocumentConverter {
 
     public DocumentConverter() {
         p = new WordParser();
-        p.setMarkupAssigner(new DefaultMarkupAssigner());
     }
 
     public Element convertWordDoc(InputStream wordDoc, Schema s) throws IOException {
@@ -81,7 +79,7 @@ public class DocumentConverter {
 
         public void addRow(Element el) {
             if (el.isUnassigned() && el.getContent() != null) {
-                String[] columns = el.getContent().trim().split(delimiter);
+                String[] columns = el.getContentAsString().trim().split(delimiter);
                 if (columns.length < minColumns) {
                     // this row is ineligible because it has too few columns
                     closeOutTable();
@@ -110,7 +108,7 @@ public class DocumentConverter {
         }
 
         private int currentTableColumnCount() {
-            return currentTable.get(0).getContent().trim().split(delimiter).length;
+            return currentTable.get(0).getContentAsString().trim().split(delimiter).length;
         }
 
         public void finish() {
@@ -139,7 +137,7 @@ public class DocumentConverter {
                 Element rowEl = new Element(tableEl.getType().getSchema().getRowType());
                 tableEl.addChild(rowEl);
                 oldRow.removeFromParent();
-                for (String columnText : oldRow.getContent().trim().split(delimiter)) {
+                for (String columnText : oldRow.getContentAsString().trim().split(delimiter)) {
                     final Element column = new Element(oldRow.getType(), columnText);
                     rowEl.addChild(column);
                 }

@@ -61,3 +61,30 @@
 .reassign {
 
 }
+
+.text {
+
+}
+
+.text a {
+    color: black;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.italic a {
+    color: black;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.bold a {
+    color: black;
+}
+
+
+

@@ -4,6 +4,7 @@ import edu.virginia.lib.findingaid.service.DocumentConverter;
 import edu.virginia.lib.findingaid.service.DocumentStore;
 import edu.virginia.lib.findingaid.service.SchemaStore;
 import edu.virginia.lib.findingaid.structure.Element;
+import edu.virginia.lib.findingaid.structure.Fragment;
 import edu.virginia.lib.findingaid.structure.NodeType;
 import edu.virginia.lib.findingaid.structure.Schema;
 import org.apache.commons.io.IOUtils;
@@ -78,17 +79,6 @@ public class FindingAid {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{id: [^/]*}")
-    public Response getDocAsJSON(@PathParam("id") final String findingAidId) {
-        Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
-        if (doc == null) {
-            return Response.status(404).build();
-        }
-        return Response.ok().type(MediaType.APPLICATION_JSON_TYPE).entity(doc.asJsonObject().toString()).build();
-    }
-
-    @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/{id: [^/]*}")
     public Response getDocAsHTML(@PathParam("id") final String findingAidId) {
@@ -112,10 +102,28 @@ public class FindingAid {
 
     @PUT
     @Path("/{id: [^/]*}/{partId: [^/]*}")
-    public Response assignType(InputStream text, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("type") final String type) throws IOException {
+    public Response assignType(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("type") final String type) throws IOException {
         final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.findById(partId);
-        element.assign(element.getType().getSchema().getNodeType(type), readContent(text));
+        NodeType nodeType = element.getType().getSchema().getNodeType(type);
+        if (nodeType.equals(nodeType.getSchema().getUnassignedType())) {
+            element.unassign();
+        } else {
+            element.assign(nodeType);
+        }
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
+    }
+
+    @PUT
+    @Path("/{id: [^/]*}/{partId: [^/]*}/{fragmentId: [^/]*}")
+    public Response updateFragmentText(InputStream value, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @PathParam("fragmentId") final String fragmentId, @QueryParam("type") final String fragmentType) throws IOException {
+        final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final Element element = doc.findById(partId);
+        final Fragment fragment = element.getFragment(fragmentId);
+        if (fragmentType != null) {
+            fragment.setType(fragmentType);
+        }
+        fragment.setText(readContent(value));
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -131,10 +139,10 @@ public class FindingAid {
     @POST
     @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}/{partId: [^/]*}")
-    public Response insertParent(InputStream text, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("type") final String type) throws IOException {
+    public Response insertParent(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("type") final String type) throws IOException {
         final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.findById(partId);
-        element.bumpContent(element.getType().getSchema().getNodeType(type), readContent(text));
+        element.bumpContent(element.getType().getSchema().getNodeType(type));
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -167,11 +175,11 @@ public class FindingAid {
      * is included as the "newParent" query parameter.
      * @returns the XHTML tree for the updated newParent element
      */
-    public Response moveComponent(InputStream text, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("newParent") final String newParentId, @QueryParam("index") final int index) throws IOException {
+    public Response moveComponent(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("newParent") final String newParentId, @QueryParam("index") final int index) throws IOException {
         final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.findById(partId);
         final Element newParent = doc.findById(newParentId);
-        element.moveElement(newParent, index, readContent(text));
+        element.moveElement(newParent, index);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(newParent.printTreeXHTML().toString()).build();
     }
 

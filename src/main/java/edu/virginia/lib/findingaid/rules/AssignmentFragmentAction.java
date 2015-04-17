@@ -28,7 +28,7 @@ public class AssignmentFragmentAction implements FragmentAction {
                 // this element is not mapped to any location, leave it alone
                 //e.removeFromParent();
             } else {
-                e.moveElement(blockPlacement, blockPlacement.getChildren().size(), e.getContent());
+                e.moveElement(blockPlacement, blockPlacement.getChildren().size());
                 e.assignPath(path);
             }
             // TODO: add support for removal of elements

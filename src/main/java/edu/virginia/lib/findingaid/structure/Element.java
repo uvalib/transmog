@@ -1,9 +1,5 @@
 package edu.virginia.lib.findingaid.structure;
 
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
@@ -11,8 +7,11 @@ import javax.xml.stream.XMLStreamException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static edu.virginia.lib.findingaid.structure.Fragment.textFragment;
 
 public class Element implements Serializable {
 
@@ -21,27 +20,43 @@ public class Element implements Serializable {
     String id;
     Element parent;
     NodeType type;
-    String content;
     List<Element> children;
+    List<Fragment> fragments;
 
     public Element(NodeType type) {
-        this(type, null);
+        this.id = UUID.randomUUID().toString();
+        this.type = type;
+        this.parent = null;
+        this.children = new ArrayList<Element>();
+        this.fragments = new ArrayList<Fragment>();
     }
 
     public Element(NodeType type, String content) {
-        this.id = UUID.randomUUID().toString();
-        this.type = type;
-        this.content = content;
-        this.parent = null;
-        this.children = new ArrayList<Element>();
+        this(type, Collections.singletonList(textFragment(content)));
+    }
+
+    public Element(NodeType type, List<Fragment> f) {
+        this(type);
+        if (!type.isTextNode()) {
+            throw new IllegalArgumentException("Elements of type " + type.getId() + " may not contain text directly!");
+        }
+        this.fragments = new ArrayList<Fragment>(f);
     }
 
     public Schema getSchema() {
         return this.type.getSchema();
     }
 
-    public String getContent() {
-        return this.content;
+    public String getContentAsString() {
+        StringBuffer sb = new StringBuffer();
+        for (Fragment f : fragments) {
+            sb.append(f.content);
+        }
+        return sb.toString();
+    }
+
+    public List<Fragment> getContent() {
+        return this.fragments;
     }
 
     public List<Element> getChildren() {
@@ -71,15 +86,15 @@ public class Element implements Serializable {
     }
 
     /**
-     * Assigns the type for an unassigned element or unassign the type of an assigned element.
-     * @throws java.lang.IllegalStateException if this type isn't current UNASSIGNED
+     * Assigns the type for an unassigned element.
+     * @throws java.lang.IllegalStateException if this type isn't currently UNASSIGNED
      * @throws java.lang.IllegalArgumentException if you attempt to assign a type when the current
      *         type is anything but "unassigned" or if you attempt to assign it an illegal type
      *         this includes a type that may not contain content when content is already set,
      *         a type that may not be the child of this Element's parent.
      */
-    public void assign(NodeType type, String content) {
-        if (!type.equals(getSchema().getUnassignedType()) && !this.isUnassigned()) {
+    public void assign(NodeType type) {
+        if (!this.isUnassigned()) {
             throw new IllegalStateException();
         }
         if (this.isUnassigned()) {
@@ -89,13 +104,21 @@ public class Element implements Serializable {
                 }
             }
         }
-        if (!type.isTextNode()) {
+        if (!type.isTextNode() && !this.fragments.isEmpty()) {
             throw new IllegalArgumentException();
         }
         this.type = type;
-        if (content != null) {
-            this.content = content;
+    }
+
+    public void unassign() {
+        this.type = this.getSchema().getUnassignedType();
+    }
+
+    public void setContent(List<Fragment> fragments) {
+        if (!this.type.isTextNode()) {
+            throw new IllegalStateException();
         }
+        this.fragments = fragments;
     }
 
     public void assignTable(String rowTypeString, List<String> colTypeStrings) {
@@ -124,11 +147,11 @@ public class Element implements Serializable {
     public void assignPath(String path) {
         final Schema s = getSchema();
         if (!path.contains("/")) {
-            this.assign(s.getNodeType(path), this.content);
+            this.assign(s.getNodeType(path));
         } else {
             Element newParent = locateOrCreatePath(path.substring(0, path.lastIndexOf('/')), getChildren().size());
-            moveElement(newParent, newParent.getChildren().size(), content);
-            assign(s.getNodeType(path.substring(path.lastIndexOf("/") + 1)), content);
+            moveElement(newParent, newParent.getChildren().size());
+            assign(s.getNodeType(path.substring(path.lastIndexOf("/") + 1)));
         }
     }
 
@@ -139,19 +162,19 @@ public class Element implements Serializable {
      * @throws java.lang.IllegalArgumentException if you attempt to
      * @returns the inserted element
      */
-    public void bumpContent(NodeType type, String content) {
+    public void bumpContent(NodeType type) {
         if (this.isUnassigned()) {
-            Element inserted = new Element(this.type, this.content);
+            Element inserted = new Element(this.type, this.fragments);
             this.type = type;
             this.children.add(inserted);
+            this.fragments = new ArrayList<Fragment>();
             inserted.parent = this;
         } else if (this.isUnassignedTable()) {
             Element inserted = new Element(this.type);
-            if (content != null) {
-                inserted.content = content;
-            }
+            inserted.fragments = fragments;
             inserted.children = this.children;
             this.children = new ArrayList<Element>();
+            this.fragments = new ArrayList<Fragment>();
             this.type = type;
             this.children.add(inserted);
             inserted.parent = this;
@@ -160,7 +183,7 @@ public class Element implements Serializable {
         }
     }
 
-    public void moveElement(final Element newParent, int index, String content) {
+    public void moveElement(final Element newParent, int index) {
         if (!isUnassigned() && !isUnassignedTable()) {
             throw new IllegalStateException();
         }
@@ -171,9 +194,6 @@ public class Element implements Serializable {
         oldParent.children.remove(this);
         newParent.children.add(index, this);
         this.parent = newParent;
-        if (content != null) {
-            this.content = content;
-        }
     }
 
     public void addChild(Element newEl) {
@@ -188,6 +208,22 @@ public class Element implements Serializable {
     public void addChild(Element newEl, int index) {
         this.children.add(index == -1 ? children.size() : index, newEl);
         newEl.parent = this;
+    }
+
+    public void addFragment(Fragment f) {
+        if (!this.type.isTextNode()) {
+            throw new IllegalStateException();
+        }
+        this.fragments.add(f);
+    }
+
+    public Fragment getFragment(String id) {
+        for (Fragment f : fragments) {
+            if (f.getId().equals(id)) {
+                return f;
+            }
+        }
+        return null;
     }
 
     public Element locateOrCreatePath(String path, int index) {
@@ -239,17 +275,6 @@ public class Element implements Serializable {
         w.close();
     }
 
-    public JsonObject asJsonObject() {
-        JsonObjectBuilder b = Json.createObjectBuilder().add("id", id).add("type", type.getId());
-        if (content != null) b.add("value", content);
-        JsonArrayBuilder a = Json.createArrayBuilder();
-        for (Element child : children) {
-            a.add(child.asJsonObject());
-        }
-        b.add("children", a);
-        return b.build();
-    }
-
     public Element getLastChild() {
         return children.isEmpty() ? null : children.get(children.size() - 1);
     }
@@ -279,7 +304,9 @@ public class Element implements Serializable {
             response.append("<div class=\"document-note\">Encoded using the <span id=\"profile-name\">" + getSchema().getSchemaName() + "</span></div>");
         }
 
-        response.append(content != null ? content : "");
+        for (Fragment f : fragments) {
+            response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getType() + "\">" + f.getText() + "</span>");
+        }
 
         if (children != null) {
             for (Element child : children) {
@@ -316,8 +343,11 @@ public class Element implements Serializable {
 
     private void emitElement(XMLEventWriter w) throws XMLStreamException {
         w.add(xml().createStartElement("", "", type.getId()));
-        if (content != null) {
-            w.add(xml().createCharacters(content));
+        for (Fragment f : fragments) {
+            w.add(xml().createStartElement("", "", "span"));
+            w.add(xml().createAttribute("type", f.getType()));
+            w.add(xml().createCharacters(f.getText()));
+            w.add(xml().createEndElement("", "", "span"));
         }
         for (Element child : children) {
             child.emitElement(w);
