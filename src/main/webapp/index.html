@@ -270,12 +270,17 @@
 
             div.draggable( {
                 cursor: 'move',
-                revert: "invalid"
+                revert: "invalid",
+                helper: dragHelper
             } );
 
             // attach assignment handlers
             div.find(".table-type-assignment").change(selectTableAssignment);
             $('.table-assignment-button').click(assignTable);
+        }
+
+        function dragHelper(event) {
+            return '<div id="dragging">Drop this between elements to move the table.</div>';
         }
 
         function selectTableAssignment() {

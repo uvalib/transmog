@@ -86,5 +86,11 @@
     color: black;
 }
 
+#dragging {
+    border: 3px solid orangered;
+    padding: .25em;
+    margin: 0.0em 0.4em 0.0em 2em;
+    background: white;
+}
 
 
