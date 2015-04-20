@@ -19,7 +19,7 @@
       </match>
       <action>
         <assignblock path="SCOPECONTENT">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -34,7 +34,7 @@
       </match>
       <action>
         <assignblock path="ARRANGEMENT">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -49,7 +49,7 @@
       </match>
       <action>
         <assignblock path="ACQINFO">
-          <assign matchedId="head" path="HEAD"/>
+         <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -64,7 +64,7 @@
       </match>
       <action>
         <assignblock path="PREFERCITE">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -80,7 +80,7 @@
       </match>
       <action>
         <assignblock path="ACCESSRESTRICT">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -95,7 +95,7 @@
       </match>
       <action>
         <assignblock path="ACCESSRESTRICT">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -110,7 +110,7 @@
       </match>
       <action>
         <assignblock path="USERESTRICT">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -127,7 +127,7 @@
       </match>
       <action>
         <assignblock path="BIOGHIST">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -142,7 +142,7 @@
       </match>
       <action>
         <assignblock path="BIOGHIST">
-          <assign matchedId="head" path="HEAD"/>
+          <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>

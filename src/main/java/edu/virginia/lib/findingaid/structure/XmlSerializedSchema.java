@@ -28,8 +28,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class XmlSerializedSchema extends Schema {
@@ -284,13 +286,20 @@ public class XmlSerializedSchema extends Schema {
 
         @XmlElement private XmlSerializedAssign[] assign;
 
+        @XmlElement private XmlSerializedOmit[] omit;
+
         public AssignmentFragmentAction getAction() {
+
+            Set<String> omitSet = new HashSet<String>();
+            for (XmlSerializedOmit o : omit) {
+                omitSet.add(o.matchedId);
+            }
 
             Map<String, String> idToPathMap = new HashMap<String, String>();
             for (XmlSerializedAssign a : assign) {
                 idToPathMap.put(a.matchedId, a.path);
             }
-            return new AssignmentFragmentAction(path, idToPathMap);
+            return new AssignmentFragmentAction(path, idToPathMap, omitSet);
 
         }
     }
@@ -325,5 +334,10 @@ public class XmlSerializedSchema extends Schema {
 
         @XmlAttribute private String matchedId;
         @XmlAttribute private String path;
+    }
+
+    private static class XmlSerializedOmit {
+
+        @XmlAttribute private String matchedId;
     }
 }
