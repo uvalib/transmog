@@ -70,6 +70,24 @@ public class FindingAid {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("/schema/{id: [^/]*}")
+    public JsonObject getSingleProfile(@PathParam("id") final String profileId) {
+        Schema s = SchemaStore.getSchemaStore().getSchema(profileId);
+        final JsonObjectBuilder o = Json.createObjectBuilder();
+        for (NodeType type : s.getAssignedNodeTypes()) {
+            final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+            for (NodeType otherType : type.possibleChildren()) {
+                if (!otherType.equals(otherType.getSchema().getUnassignedType())) {
+                    arrayBuilder.add(otherType.getId());
+                }
+            }
+            o.add(type.getId(), Json.createObjectBuilder().add("possibleChildren", arrayBuilder.build()).add("canContainText", type.isTextNode()).add("label", type.getDisplayLabel() == null || type.getDisplayLabel().trim().equals("") ? type.getId() : type.getDisplayLabel()));
+        }
+        return o.build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     public JsonArray listFindingAids(@PathParam("id") final String findingAidId) {
         final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
         for (String id : DocumentStore.getDocumentStore().listDocumentIds()) {
@@ -82,7 +100,8 @@ public class FindingAid {
     @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}")
     public Response addDocument(@PathParam("id") final String findingAidId, @QueryParam("schemaId") final String schemaName, InputStream documentStream) throws IOException {
-        final String id = (findingAidId == null || findingAidId.equals("") ? UUID.randomUUID().toString() : findingAidId);
+        // TODO: use the provided findingAidId as a name attribute on the finding aid.
+        String id = UUID.randomUUID().toString();
         final Element doc = new DocumentConverter().convertWordDoc(documentStream, getRequestedSchemaOrDefault(schemaName));
         DocumentStore.getDocumentStore().addDocument(doc, id);
         System.out.println("Added document... " + id);
@@ -98,6 +117,41 @@ public class FindingAid {
             return Response.status(404).build();
         }
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(doc.printTreeXHTML().toString()).build();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    @Path("/{id: [^/]*}/edit")
+    public Response getDocumentPage(@PathParam("id") final String findingAidId) {
+        Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        if (doc == null) {
+            return Response.status(404).build();
+        }
+        final String pageHtml = "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "  <head lang=\"en\">\n" +
+                "    <meta charset=\"UTF-8\">\n" +
+                "    <title>" + findingAidId + "</title>\n" +
+                "\n" +
+                "    <script src=\"../../../js/jquery-2.1.3.js\"></script>\n" +
+                "    <script src=\"../../../js/jquery-ui.js\"></script>\n" +
+                "    <script src=\"../../../js/bootstrap.js\"></script>\n" +
+                "    <link rel=\"stylesheet\" href=\"../../../css/bootstrap.min.css\">\n" +
+                "    <link rel=\"stylesheet\" href=\"../../../css/main.css\">\n" +
+                "    <script src=\"../../../js/document-support.js\"></script>\n" +
+                "      <script type=\"text/javascript\">\n" +
+                "          $(document).ready(function(){\n" +
+                "              loadDocumentById('" + findingAidId + "')\n" +
+                "          });          \n" +
+                "      </script>    \n" +
+                "  </head>\n" +
+                "  <body>\n" +
+                "    <div class=\"container\">\n" +
+                "      <div class=\"row\" id=\"workspace\">\n" +
+                "      </div>\n" +
+                "    </div>\n" +
+                "</body>";
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(pageHtml).build();
     }
 
     @GET
