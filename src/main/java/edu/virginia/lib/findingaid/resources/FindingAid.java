@@ -2,14 +2,13 @@ package edu.virginia.lib.findingaid.resources;
 
 import edu.virginia.lib.findingaid.service.DocumentConverter;
 import edu.virginia.lib.findingaid.service.DocumentStore;
-import edu.virginia.lib.findingaid.service.SchemaStore;
+import edu.virginia.lib.findingaid.service.ProfileStore;
 import edu.virginia.lib.findingaid.structure.Element;
 import edu.virginia.lib.findingaid.structure.Fragment;
 import edu.virginia.lib.findingaid.structure.NodeType;
-import edu.virginia.lib.findingaid.structure.Schema;
+import edu.virginia.lib.findingaid.structure.Profile;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -49,35 +48,35 @@ public class FindingAid {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/schema")
+    @Path("/profile")
     public JsonObject getStructureRules() {
         final JsonObjectBuilder all = Json.createObjectBuilder();
-        for (Schema s : SchemaStore.getSchemaStore().getSchemaList()) {
+        for (Profile s : ProfileStore.getProfileStore().getProfileList()) {
             final JsonObjectBuilder o = Json.createObjectBuilder();
             for (NodeType type : s.getAssignedNodeTypes()) {
                 final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
                 for (NodeType otherType : type.possibleChildren()) {
-                    if (!otherType.equals(otherType.getSchema().getUnassignedType())) {
+                    if (!otherType.equals(otherType.getProfile().getUnassignedType())) {
                         arrayBuilder.add(otherType.getId());
                     }
                 }
                 o.add(type.getId(), Json.createObjectBuilder().add("possibleChildren", arrayBuilder.build()).add("canContainText", type.isTextNode()).add("label", type.getDisplayLabel() == null || type.getDisplayLabel().trim().equals("") ? type.getId() : type.getDisplayLabel()));
             }
-            all.add(s.getSchemaName(), o.build());
+            all.add(s.getProfileName(), o.build());
         }
         return all.build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/schema/{id: [^/]*}")
+    @Path("/profile/{id: [^/]*}")
     public JsonObject getSingleProfile(@PathParam("id") final String profileId) {
-        Schema s = SchemaStore.getSchemaStore().getSchema(profileId);
+        Profile s = ProfileStore.getProfileStore().getProfile(profileId);
         final JsonObjectBuilder o = Json.createObjectBuilder();
         for (NodeType type : s.getAssignedNodeTypes()) {
             final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
             for (NodeType otherType : type.possibleChildren()) {
-                if (!otherType.equals(otherType.getSchema().getUnassignedType())) {
+                if (!otherType.equals(otherType.getProfile().getUnassignedType())) {
                     arrayBuilder.add(otherType.getId());
                 }
             }
@@ -99,10 +98,10 @@ public class FindingAid {
     @POST
     @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}")
-    public Response addDocument(@PathParam("id") final String findingAidId, @QueryParam("schemaId") final String schemaName, InputStream documentStream) throws IOException {
+    public Response addDocument(@PathParam("id") final String findingAidId, @QueryParam("profileId") final String profileName, InputStream documentStream) throws IOException {
         // TODO: use the provided findingAidId as a name attribute on the finding aid.
         String id = UUID.randomUUID().toString();
-        final Element doc = new DocumentConverter().convertWordDoc(documentStream, getRequestedSchemaOrDefault(schemaName));
+        final Element doc = new DocumentConverter().convertWordDoc(documentStream, getRequestedProfileOrDefault(profileName));
         DocumentStore.getDocumentStore().addDocument(doc, id);
         System.out.println("Added document... " + id);
         return Response.status(Response.Status.OK).contentLocation(UriBuilder.fromResource(FindingAid.class).path(id).build()).build();
@@ -131,7 +130,7 @@ public class FindingAid {
                 "<html>\n" +
                 "  <head lang=\"en\">\n" +
                 "    <meta charset=\"UTF-8\">\n" +
-                "    <title>" + findingAidId + "</title>\n" +
+                "    <title>Transmog</title>\n" +
                 "\n" +
                 "    <script src=\"../../../js/jquery-2.1.3.js\"></script>\n" +
                 "    <script src=\"../../../js/jquery-ui.js\"></script>\n" +
@@ -162,7 +161,7 @@ public class FindingAid {
         if (doc == null) {
             return Response.status(404).build();
         }
-        return Response.ok().type(MediaType.TEXT_XML_TYPE).entity(doc.getSchema().transformDocument(doc).toString()).build();
+        return Response.ok().type(MediaType.TEXT_XML_TYPE).entity(doc.getProfile().transformDocument(doc).toString()).build();
     }
 
     @PUT
@@ -170,8 +169,8 @@ public class FindingAid {
     public Response assignType(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("type") final String type) throws IOException {
         final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.findById(partId);
-        NodeType nodeType = element.getType().getSchema().getNodeType(type);
-        if (nodeType.equals(nodeType.getSchema().getUnassignedType())) {
+        NodeType nodeType = element.getType().getProfile().getNodeType(type);
+        if (nodeType.equals(nodeType.getProfile().getUnassignedType())) {
             element.unassign();
         } else {
             element.assign(nodeType);
@@ -261,7 +260,7 @@ public class FindingAid {
     public Response insertParent(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("type") final String type) throws IOException {
         final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.findById(partId);
-        element.bumpContent(element.getType().getSchema().getNodeType(type));
+        element.bumpContent(element.getType().getProfile().getNodeType(type));
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -310,13 +309,13 @@ public class FindingAid {
         return result;
     }
 
-    private Schema getRequestedSchemaOrDefault(String name) {
+    private Profile getRequestedProfileOrDefault(String name) {
         if (name == null) {
-            return SchemaStore.getSchemaStore().getDefaultSchema();
+            return ProfileStore.getProfileStore().getDefaultProfile();
         } else {
-            Schema s = SchemaStore.getSchemaStore().getSchema(name);
+            Profile s = ProfileStore.getProfileStore().getProfile(name);
             if (s == null) {
-                throw new RuntimeException("Unknown schema \"" + name + "\"!");
+                throw new RuntimeException("Unknown profile \"" + name + "\"!");
             }
             return s;
         }

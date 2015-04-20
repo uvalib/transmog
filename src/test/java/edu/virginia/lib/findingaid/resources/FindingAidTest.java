@@ -18,9 +18,9 @@ public class FindingAidTest extends JerseyTest {
     }
 
     @Test
-    public void testGetSchema() {
+    public void testGetProfile() {
         JsonObject result = Json.createReader(new ByteArrayInputStream(
-                target().path("findingaids/schema").request().get(String.class).getBytes())).readObject();
+                target().path("findingaids/profile").request().get(String.class).getBytes())).readObject();
         System.out.println(result);
     }
 

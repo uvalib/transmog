@@ -4,7 +4,7 @@ import edu.virginia.lib.findingaid.rules.Rule;
 
 import java.util.List;
 
-public abstract class Schema {
+public abstract class Profile {
 
     public static final String UNASSIGNED_TABLE = "UNASSIGNED_TABLE";
     public static final String UNASSIGNED_ROW = "UNASSIGNED_ROW";
@@ -16,15 +16,15 @@ public abstract class Schema {
 
     private NodeType unassigned;
 
-    public Schema() {
+    public Profile() {
         row = new SystemNodeType(this, "Row", "", UNASSIGNED_ROW, false);
         table = new SystemNodeType(this, "Table", "", UNASSIGNED_TABLE, false);
         unassigned = new SystemNodeType(this, "Unassigned", "", UNASSIGNED, true);
     }
 
-    public abstract String getSchemaName();
+    public abstract String getProfileName();
 
-    public abstract String getSchemaDescription();
+    public abstract String getProfileDescription();
 
     public abstract NodeType getRootNodeType();
 

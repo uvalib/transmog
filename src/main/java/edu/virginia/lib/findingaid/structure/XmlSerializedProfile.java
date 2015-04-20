@@ -34,15 +34,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class XmlSerializedSchema extends Schema {
+public class XmlSerializedProfile extends Profile {
 
-    public static XmlSerializedSchema loadSchema(InputStream xmlStream) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(XmlSerializedSchema.class);
+    public static XmlSerializedProfile loadProfile(InputStream xmlStream) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance(XmlSerializedProfile.class);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        JAXBElement<XmlSerializedSchema> p = unmarshaller.unmarshal(new StreamSource(xmlStream), XmlSerializedSchema.class);
-        final XmlSerializedSchema s = p.getValue();
+        JAXBElement<XmlSerializedProfile> p = unmarshaller.unmarshal(new StreamSource(xmlStream), XmlSerializedProfile.class);
+        final XmlSerializedProfile s = p.getValue();
         for (XmlSerializedNodeType n : s.nodeType) {
-            n.schema = s;
+            n.profile = s;
         }
         s.validate();
         return s;
@@ -68,12 +68,12 @@ public class XmlSerializedSchema extends Schema {
     private Transformer t;
 
     @Override
-    public String getSchemaName() {
+    public String getProfileName() {
         return name;
     }
 
     @Override
-    public String getSchemaDescription() {
+    public String getProfileDescription() {
         return description;
     }
 
@@ -140,8 +140,8 @@ public class XmlSerializedSchema extends Schema {
         }
     }
 
-    public boolean equals(Schema other) {
-        return other.getClass().equals(getClass()) && this.name.equals(other.getSchemaName());
+    public boolean equals(Profile other) {
+        return other.getClass().equals(getClass()) && this.name.equals(other.getProfileName());
     }
 
     public int hashCode() {
@@ -160,11 +160,11 @@ public class XmlSerializedSchema extends Schema {
 
         @XmlElement private String[] canHaveChild;
 
-        private Schema schema;
+        private Profile profile;
 
         @Override
-        public Schema getSchema() {
-            return schema;
+        public Profile getProfile() {
+            return profile;
         }
 
         @Override
@@ -194,7 +194,7 @@ public class XmlSerializedSchema extends Schema {
 
         @Override
         public boolean canHaveChild(NodeType type) {
-            if (!type.getSchema().equals(schema)) {
+            if (!type.getProfile().equals(profile)) {
                 return false;
             }
             if (canHaveChild == null) {
@@ -215,21 +215,21 @@ public class XmlSerializedSchema extends Schema {
                 return result;
             }
             for (String childId : canHaveChild) {
-                final NodeType childType = schema.getNodeType(childId);
+                final NodeType childType = profile.getNodeType(childId);
                 if (childType == null) {
-                    throw new IllegalStateException("Invalid schema, no node type defined for " + childId + "!");
+                    throw new IllegalStateException("Invalid profile, no node type defined for " + childId + "!");
                 }
-                result.add(schema.getNodeType(childId));
+                result.add(profile.getNodeType(childId));
             }
             return result;
         }
 
         public boolean equals(NodeType other) {
-            return this.schema.equals(other.getSchema()) && this.id.equals(other.getId());
+            return this.profile.equals(other.getProfile()) && this.id.equals(other.getId());
         }
 
         public int hashCode() {
-            return (this.schema.getSchemaName() + "-" + this.getId()).hashCode();
+            return (this.profile.getProfileName() + "-" + this.getId()).hashCode();
         }
 
         public String toString() {

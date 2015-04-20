@@ -43,8 +43,8 @@ public class Element implements Serializable {
         this.fragments = new ArrayList<Fragment>(f);
     }
 
-    public Schema getSchema() {
-        return this.type.getSchema();
+    public Profile getProfile() {
+        return this.type.getProfile();
     }
 
     public String getContentAsString() {
@@ -111,7 +111,7 @@ public class Element implements Serializable {
     }
 
     public void unassign() {
-        this.type = this.getSchema().getUnassignedType();
+        this.type = this.getProfile().getUnassignedType();
     }
 
     public void setContent(List<Fragment> fragments) {
@@ -129,23 +129,23 @@ public class Element implements Serializable {
             throw new IllegalArgumentException("There are " + this.getChildren().get(0).getChildren().size() + " rows but only " + colTypeStrings.size() + " type assignments were provided!");
         }
         for (String type : colTypeStrings) {
-            if (getSchema().getNodeType(type) == null) {
-                throw new IllegalArgumentException("Type " + type + " not found in schema!");
+            if (getProfile().getNodeType(type) == null) {
+                throw new IllegalArgumentException("Type " + type + " not found in profile!");
             }
         }
-        this.type = getSchema().getNodeType(rowTypeString);
+        this.type = getProfile().getNodeType(rowTypeString);
         for (int i = 0; i < this.children.size(); i ++) {
             Element row = this.children.get(i);
-            row.type = getSchema().getNodeType(rowTypeString);
+            row.type = getProfile().getNodeType(rowTypeString);
             for (int j = 0; j < row.children.size(); j ++) {
                 Element cell = row.children.get(j);
-                cell.type = cell.getSchema().getNodeType(colTypeStrings.get(j));
+                cell.type = cell.getProfile().getNodeType(colTypeStrings.get(j));
             }
         }
     }
 
     public List<List<String>> getTableData() {
-        if (!type.equals(getSchema().getTableType())) {
+        if (!type.equals(getProfile().getTableType())) {
             throw new IllegalStateException();
         }
         final List<List<String>> table = new ArrayList<List<String>>(this.children.size());
@@ -160,22 +160,22 @@ public class Element implements Serializable {
     }
 
     public void replaceTableData(List<List<String>> data) {
-        if (!type.equals(getSchema().getTableType())) {
+        if (!type.equals(getProfile().getTableType())) {
             throw new IllegalStateException();
         }
 
         this.children.clear();
         for (List<String> r : data) {
-            Element row = new Element(getSchema().getRowType());
+            Element row = new Element(getProfile().getRowType());
             for (String v : r) {
-                row.addChild(new Element(getSchema().getUnassignedType(), v));
+                row.addChild(new Element(getProfile().getUnassignedType(), v));
             }
             this.children.add(row);
         }
     }
 
     public void assignPath(String path) {
-        final Schema s = getSchema();
+        final Profile s = getProfile();
         if (!path.contains("/")) {
             this.assign(s.getNodeType(path));
         } else {
@@ -231,7 +231,7 @@ public class Element implements Serializable {
     }
 
     public void addChild(int index) {
-        final Element inserted = new Element(getSchema().getUnassignedType(), "");
+        final Element inserted = new Element(getProfile().getUnassignedType(), "");
         addChild(inserted, index);
     }
 
@@ -257,7 +257,7 @@ public class Element implements Serializable {
     }
 
     public Element locateOrCreatePath(String path, int index) {
-        final Schema s = getSchema();
+        final Profile s = getProfile();
         String[] pathTypes = path.split("/");
         NodeType type = s.getNodeType(pathTypes[0]);
         Element child = getFirstChildOfType(type);
@@ -310,8 +310,8 @@ public class Element implements Serializable {
     }
 
     public String printTreeXHTML() {
-        final NodeType table = getSchema().getTableType();
-        final NodeType row = getSchema().getRowType();
+        final NodeType table = getProfile().getTableType();
+        final NodeType row = getProfile().getRowType();
         final boolean isTable = type.equals(table);
         final boolean isRow = type.equals(row);
         final boolean isCell = getParent() != null && getParent().type.equals(row);
@@ -322,7 +322,7 @@ public class Element implements Serializable {
             response.append("<tr id=\"" + id + "\">");
         } else if (isCell) {
             response.append("<td id=\"" + id + "\">");
-        } else if (getSchema().getRootNodeType().equals(type)) {
+        } else if (getProfile().getRootNodeType().equals(type)) {
             response.append("<div class=\"" + type.getId() + " ROOT ASSIGNED\" id=\"" + id + "\">");
         } else if (isUnassigned()) {
             response.append("<div class=\"" + type.getId() + "\" id=\"" + id + "\">");
@@ -330,8 +330,8 @@ public class Element implements Serializable {
             response.append("<div class=\"" + type.getId() + " ASSIGNED\" id=\"" + id + "\">");
         }
 
-        if (getSchema().getRootNodeType().equals(type)) {
-            response.append("<div class=\"document-note\">Encoded using the <span id=\"profile-name\">" + getSchema().getSchemaName() + "</span></div>");
+        if (getProfile().getRootNodeType().equals(type)) {
+            response.append("<div class=\"document-note\">Encoded using the <span id=\"profile-name\">" + getProfile().getProfileName() + "</span></div>");
         }
 
         for (Fragment f : fragments) {
@@ -386,10 +386,10 @@ public class Element implements Serializable {
     }
 
     public boolean isUnassigned() {
-        return this.type.equals(getSchema().getUnassignedType());
+        return this.type.equals(getProfile().getUnassignedType());
     }
 
     public boolean isUnassignedTable() {
-        return this.type.equals(getSchema().getTableType());
+        return this.type.equals(getProfile().getTableType());
     }
 }

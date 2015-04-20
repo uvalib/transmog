@@ -10,13 +10,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class XmlSerializedSchemaTest {
+public class XmlSerializedProfileTest {
 
     @Test
     public void testBasicParsing() throws JAXBException {
-        final Schema s = XmlSerializedSchema.loadSchema(XmlSerializedSchemaTest.class.getClassLoader().getResourceAsStream("test-schema-1.xml"));
-        Assert.assertEquals("test", s.getSchemaName());
-        Assert.assertEquals("A simple test structure.", s.getSchemaDescription());
+        final Profile s = XmlSerializedProfile.loadProfile(XmlSerializedProfileTest.class.getClassLoader().getResourceAsStream("test-schema-1.xml"));
+        Assert.assertEquals("test", s.getProfileName());
+        Assert.assertEquals("A simple test structure.", s.getProfileDescription());
 
         final List<NodeType> types = s.getAssignedNodeTypes();
         Assert.assertEquals(3, types.size());

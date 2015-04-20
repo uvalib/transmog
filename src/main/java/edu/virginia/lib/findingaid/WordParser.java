@@ -2,7 +2,7 @@ package edu.virginia.lib.findingaid;
 
 import edu.virginia.lib.findingaid.structure.Element;
 import edu.virginia.lib.findingaid.structure.Fragment;
-import edu.virginia.lib.findingaid.structure.Schema;
+import edu.virginia.lib.findingaid.structure.Profile;
 import org.apache.poi.POIXMLException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -18,7 +18,7 @@ import java.io.IOException;
 
 public class WordParser {
 
-    public Element processDocument(File f, Schema s) {
+    public Element processDocument(File f, Profile s) {
         try {
             try {
                 XWPFDocument d = new XWPFDocument(new FileInputStream(f));
@@ -38,21 +38,21 @@ public class WordParser {
      * A versy simple process for old word documents.  The only structure currently retained
      * is the paragraphs.
      */
-    private Element processWORDDoc(Schema schema, HWPFDocument doc) throws IOException, XMLStreamException {
-        Element root = new Element(schema.getRootNodeType());
+    private Element processWORDDoc(Profile profile, HWPFDocument doc) throws IOException, XMLStreamException {
+        Element root = new Element(profile.getRootNodeType());
 
         WordExtractor w = new WordExtractor(doc);
         for (String p : w.getParagraphText()) {
             if (p.trim().length() > 0) {
-                root.addChild(new Element(schema.getUnassignedType(), p));
+                root.addChild(new Element(profile.getUnassignedType(), p));
             }
         }
 
         return root;
     }
 
-    private Element processXMLDoc(Schema schema, XWPFDocument doc) throws IOException, XMLStreamException {
-        Element root = new Element(schema.getRootNodeType());
+    private Element processXMLDoc(Profile profile, XWPFDocument doc) throws IOException, XMLStreamException {
+        Element root = new Element(profile.getRootNodeType());
 
         for (XWPFParagraph p : doc.getParagraphs()) {
 
@@ -66,7 +66,7 @@ public class WordParser {
             }
 
             if (recognizedFormatting) {
-                Element currentEl = new Element(schema.getUnassignedType());
+                Element currentEl = new Element(profile.getUnassignedType());
                 StringBuffer plainText = new StringBuffer();
 
                 for (IRunElement i : p.getIRuns()) {
@@ -95,7 +95,7 @@ public class WordParser {
                 }
             } else {
                 if (p.getText().trim().length() > 0) {
-                    root.addChild(new Element(schema.getUnassignedType(), p.getText()));
+                    root.addChild(new Element(profile.getUnassignedType(), p.getText()));
                 }
             }
         }

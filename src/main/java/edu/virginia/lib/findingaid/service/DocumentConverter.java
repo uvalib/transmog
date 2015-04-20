@@ -4,7 +4,7 @@ import edu.virginia.lib.findingaid.WordParser;
 import edu.virginia.lib.findingaid.rules.BlockMatch;
 import edu.virginia.lib.findingaid.rules.Rule;
 import edu.virginia.lib.findingaid.structure.Element;
-import edu.virginia.lib.findingaid.structure.Schema;
+import edu.virginia.lib.findingaid.structure.Profile;
 import org.apache.poi.util.IOUtils;
 
 import java.io.File;
@@ -22,7 +22,7 @@ public class DocumentConverter {
         p = new WordParser();
     }
 
-    public Element convertWordDoc(InputStream wordDoc, Schema s) throws IOException {
+    public Element convertWordDoc(InputStream wordDoc, Profile s) throws IOException {
         File f = File.createTempFile("temporary", ".doc");
         FileOutputStream fos = new FileOutputStream(f);
         try {
@@ -37,7 +37,7 @@ public class DocumentConverter {
         }
     }
 
-    public Element convertWordDoc(File doc, Schema s) throws IOException {
+    public Element convertWordDoc(File doc, Profile s) throws IOException {
         final Element root = p.processDocument(doc, s);
 
         annotateTables(root);
@@ -59,7 +59,7 @@ public class DocumentConverter {
         b.finish();
     }
 
-    private void applyRules(Element el, Schema s) {
+    private void applyRules(Element el, Profile s) {
         for (Rule r : s.getRules()) {
             for (BlockMatch b : r.getWhenClause().findMatches(el)) {
                 r.getAction().apply(b);
@@ -131,10 +131,10 @@ public class DocumentConverter {
                 if (tableEl == null) {
                     final Element parent = oldRow.getParent();
                     int index = oldRow.getIndexWithinParent();
-                    tableEl = new Element(parent.getType().getSchema().getTableType());
+                    tableEl = new Element(parent.getType().getProfile().getTableType());
                     parent.addChild(tableEl, index);
                 }
-                Element rowEl = new Element(tableEl.getType().getSchema().getRowType());
+                Element rowEl = new Element(tableEl.getType().getProfile().getRowType());
                 tableEl.addChild(rowEl);
                 oldRow.removeFromParent();
                 for (String columnText : oldRow.getContentAsString().trim().split(delimiter)) {

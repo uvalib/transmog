@@ -93,4 +93,29 @@
     background: white;
 }
 
+.logo {
+    padding: .5em;
+    display: inline-block;
+}
+
+h1 {
+    display: inline-block;
+    line-height: 100px;
+    paddding: .5em;
+}
+
+label {
+    width: 100px;
+}
+
+.spacer {
+    width: 100px;
+    display: inline-block;
+}
+
+#file {
+    display: inline-block;
+}
+
+
 

@@ -4,8 +4,8 @@ import edu.virginia.lib.findingaid.rules.BlockMatch;
 import edu.virginia.lib.findingaid.rules.ElementPattern;
 import edu.virginia.lib.findingaid.rules.SequentialPatternBlockMatcher;
 import edu.virginia.lib.findingaid.structure.Element;
-import edu.virginia.lib.findingaid.structure.Schema;
-import edu.virginia.lib.findingaid.structure.XmlSerializedSchema;
+import edu.virginia.lib.findingaid.structure.Profile;
+import edu.virginia.lib.findingaid.structure.XmlSerializedProfile;
 import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +18,11 @@ import java.util.regex.Pattern;
 
 public class SequentialPatternBlockMatcherTest {
 
-    private Schema s;
+    private Profile s;
 
     @Before
     public void setup() throws JAXBException {
-        s = XmlSerializedSchema.loadSchema(getClass().getClassLoader().getResourceAsStream("test-schema-1.xml"));
+        s = XmlSerializedProfile.loadProfile(getClass().getClassLoader().getResourceAsStream("test-schema-1.xml"));
     }
 
     @Test

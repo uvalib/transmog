@@ -1,4 +1,4 @@
-var schema;
+var profile;
 
 var openDocumentId;
 
@@ -17,10 +17,10 @@ function loadDocumentById(docid) {
 
             $('#workspace').replaceWith("<div class=\"row\" id=\"workspace\"><h4>Working Document</h4>" + html + "</div>");
 
-            $.ajax({ url: "/service/findingaids/schema/" + $('#profile-name').text(),
+            $.ajax({ url: "/service/findingaids/profile/" + $('#profile-name').text(),
                 context: document.body,
                 success: function(json) {
-                    schema = json;
+                    profile = json;
 
                     markUpDiv($('.ROOT').find(".UNASSIGNED, .ASSIGNED, .UNASSIGNED_TABLE"));
 
@@ -171,9 +171,9 @@ function addToolbarForUnassigned(div) {
     var parentType = getPartType(div.parent());
 
     var toolbar = '<div class="top-bar"><select class="type-assignment"><option>Select type...</option>';
-    if (parentType in schema) {
-        for (i = 0; i < schema[parentType]["possibleChildren"].length; i++) {
-            toolbar += '<option value="' + schema[parentType]["possibleChildren"][i] + '">' + getLabel(schema[parentType]["possibleChildren"][i]) + '</option>';
+    if (parentType in profile) {
+        for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
+            toolbar += '<option value="' + profile[parentType]["possibleChildren"][i] + '">' + getLabel(profile[parentType]["possibleChildren"][i]) + '</option>';
         }
     }
     toolbar += '</select> <a href="javascript:noop()" class="delete">(delete)</a></div>';
@@ -209,9 +209,9 @@ function addToolbarForTable(div) {
     table.addClass("table-striped");
 
     var toolbar = '<span>Treat each row as a:</span><div class="top-bar"><select class="table-type-assignment"><option>Select type...</option>';
-    if (parentType in schema) {
-        for (i = 0; i < schema[parentType]["possibleChildren"].length; i++) {
-            toolbar += '<option value="' + schema[parentType]["possibleChildren"][i] + '">' + getLabel(schema[parentType]["possibleChildren"][i]) + '</option>';
+    if (parentType in profile) {
+        for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
+            toolbar += '<option value="' + profile[parentType]["possibleChildren"][i] + '">' + getLabel(profile[parentType]["possibleChildren"][i]) + '</option>';
         }
     }
     toolbar += '</select> </div> <button class=".btn table-assignment-button">Apply</button>';
@@ -285,9 +285,9 @@ function selectTableAssignment() {
 function getHtmlStringForRowTypeAssignment(parentType) {
     // TODO: only include text types
     var select = '<select class="row-type-assignment"><option>Select type for column...</option>';
-    if (parentType in schema) {
-        for (i = 0; i < schema[parentType]["possibleChildren"].length; i ++) {
-            select += '<option value="' + schema[parentType]["possibleChildren"][i] + '">' + getLabel(schema[parentType]["possibleChildren"][i]) + '</option>';
+    if (parentType in profile) {
+        for (i = 0; i < profile[parentType]["possibleChildren"].length; i ++) {
+            select += '<option value="' + profile[parentType]["possibleChildren"][i] + '">' + getLabel(profile[parentType]["possibleChildren"][i]) + '</option>';
         }
     }
     select += '</select>';
@@ -331,7 +331,7 @@ function assignType() {
     var partId = link.parent().parent().attr('id');
     var selectedType = link.val();
     console.log("SelectedType: " + selectedType);
-    var canContainText = schema[selectedType]["canContainText"];
+    var canContainText = profile[selectedType]["canContainText"];
     $.ajax({
         type: canContainText ? "PUT" : "POST",
         url: partId + "?type=" + selectedType,
@@ -357,5 +357,5 @@ function getPartType(jquery) {
 }
 
 function getLabel(partType) {
-    return schema[partType]["label"];
+    return profile[partType]["label"];
 }

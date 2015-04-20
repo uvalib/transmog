@@ -3,7 +3,7 @@
   <name>EAD encoding for Virginia Heritage Site</name>
   <description>A simple structure for organizing text into UVA-compliant EAD xml
     files.</description>
-  <transformation>uvaead-schema.xsl</transformation>
+  <transformation>uvaead-profile.xsl</transformation>
   <rootNodeTypeId>DOCUMENT</rootNodeTypeId>
 
   <rules />

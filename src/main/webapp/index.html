@@ -2,7 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Finding Aid Converter</title>
+    <title>Transmog</title>
 
     <script src="js/jquery-2.1.3.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -12,13 +12,13 @@
 
     <script type="text/javascript">
 
-        var schemaList;
+        var profileList;
 
         $(document).ready(function(){
-            $.ajax({ url: "service/findingaids/schema",
+            $.ajax({ url: "service/findingaids/profile",
                 context: document.body,
                 success: function(json) {
-                    schemaList = json;
+                    profileList = json;
                     for (var key in json) {
                         $('#profile').prepend($('<option>' + key + '</option>'))
                         $('#upload_button').submit(uploadFile);
@@ -28,7 +28,7 @@
 
         function uploadFile() {
             var update_file = document.getElementById("file").files[0];
-            var schema_id = $("#profile").val();
+            var profile_id = $("#profile").val();
             var reader = new FileReader();
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function() {
@@ -43,7 +43,7 @@
                 }
             };
 
-            xhr.open( "POST", "service/findingaids/" + update_file.name + "?schemaId=" + schema_id);
+            xhr.open( "POST", "service/findingaids/" + update_file.name + "?profileId=" + profile_id);
 
             xhr.setRequestHeader("Content-type", update_file.type || "application/octet-stream");
             reader.onload = function(e) {
@@ -63,23 +63,27 @@
 <body>
   <div class="container">
     <div class="header">
-        <!--
-        <nav>
-            <ul class="nav nav-pills pull-right">
-                <li role="presentation" class="active"><a href="#">Home</a></li>
-                <li role="presentation"><a href="#">About</a></li>
-                <li role="presentation"><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-        -->
-        <h3 class="text-muted">Finding Aid Processor</h3>
+        <!--<img src="transmog-logo.png" alt="transmog logo"  class="logo" height="50" width="61"/>-->
+        <h1>Transmog</h1>
     </div>
 
     <div class="row" id="load-options">
         <div class="col-lg-6">
-            <h4>Start a NEW document</h4>
-            <p>Upload a word document to serve as the starting point for your new structured XML document.</p>
-
+            <h4>What is Transmog?</h4>
+            <p>
+                Transmog is a simple web application to aid in the conversion of Word documents into more meaningfully
+                structured XML documents.  Originally designed to convert archival finding aids into EAD XML files,
+                this application now supports arbitrary profiles defining the structure and rules for for the
+                generated XML.
+            </p>
+        </div>
+        <div class="col-lg-6">
+            <h4>Try it out!</h4>
+            <ol>
+                <li>select a profile for your destination structure</li>
+                <li>select a Word '97-'03 Document (doc) or an Office Open XML (docx) file </li>
+                <li>click Begin</li>
+            </ol>
             <form action="javascript:uploadFile()">
                 <div>
                     <label for="profile" class="control-label">Profile</label>
@@ -88,11 +92,14 @@
                 <div>
                     <label for="file" class="control-label">File</label>
                     <input type="file" id="file" />
-                    <input type="submit" class="btn btn-default" value="Upload" id="upload_button">
+                </div>
+                <div>
+                    <div class="spacer" >&nbsp;</div>
+                    <input type="submit" class="btn btn-default" value="Begin" id="upload_button" />
                 </div>
             </form>
         </div>
     </div>
-  </div> <!-- /container -->
+  </div>
 </body>
 </html>
