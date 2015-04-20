@@ -144,6 +144,36 @@ public class Element implements Serializable {
         }
     }
 
+    public List<List<String>> getTableData() {
+        if (!type.equals(getSchema().getTableType())) {
+            throw new IllegalStateException();
+        }
+        final List<List<String>> table = new ArrayList<List<String>>(this.children.size());
+        for (Element c : children) {
+            final List<String> row = new ArrayList<String>();
+            for (Element cell : c.children) {
+                row.add(cell.getContentAsString());
+            }
+            table.add(row);
+        }
+        return table;
+    }
+
+    public void replaceTableData(List<List<String>> data) {
+        if (!type.equals(getSchema().getTableType())) {
+            throw new IllegalStateException();
+        }
+
+        this.children.clear();
+        for (List<String> r : data) {
+            Element row = new Element(getSchema().getRowType());
+            for (String v : r) {
+                row.addChild(new Element(getSchema().getUnassignedType(), v));
+            }
+            this.children.add(row);
+        }
+    }
+
     public void assignPath(String path) {
         final Schema s = getSchema();
         if (!path.contains("/")) {

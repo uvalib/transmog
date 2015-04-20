@@ -8,6 +8,13 @@ import edu.virginia.lib.findingaid.structure.Fragment;
 import edu.virginia.lib.findingaid.structure.NodeType;
 import edu.virginia.lib.findingaid.structure.Schema;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xml.sax.SAXException;
 
 import javax.json.Json;
@@ -23,13 +30,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -127,13 +138,67 @@ public class FindingAid {
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
-    @PUT
+    @POST
     @Path("/{id: [^/]*}/{partId: [^/]*}/table")
     public Response processTable(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("rowType") final String rowType, @QueryParam("colTypes") final List<String> colTypes) {
         final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.findById(partId);
         element.assignTable(rowType, colTypes);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
+    }
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("/{id: [^/]*}/{partId: [^/]*}/table.xlsx")
+    public StreamingOutput processTable(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId) {
+        final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final Element element = doc.findById(partId);
+
+        final Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("exported table");
+        final List<List<String>> table = element.getTableData();
+        for (short rowNum = 0; rowNum < table.size(); rowNum ++) {
+            Row row = sheet.createRow(rowNum);
+            for (int colNum = 0; colNum < table.get(rowNum).size(); colNum++) {
+                Cell cell = row.createCell(colNum);
+                cell.setCellValue(table.get(rowNum).get(colNum));
+            }
+        }
+
+        return new StreamingOutput() {
+            @Override
+            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
+                wb.write(outputStream);
+            }
+        };
+    }
+
+    @PUT
+    @Produces(MediaType.TEXT_XML)
+    @Path("/{id: [^/]*}/{partId: [^/]*}/table.xlsx")
+    public Response processTable(InputStream spreadsheet, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId) throws IOException {
+        final Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final Element element = doc.findById(partId);
+
+        final Workbook wb = new XSSFWorkbook(spreadsheet);
+        Sheet sheet = wb.getSheetAt(0);
+        final List<List<String>> table = new ArrayList<List<String>>();
+        for (Row r : sheet) {
+            List<String> row = new ArrayList<String>();
+            table.add(row);
+            for (Cell c : r) {
+                if (c != null && (c.getCellType() == Cell.CELL_TYPE_STRING)) {
+                    row.add(c.getStringCellValue());
+                } else if (c != null && c.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                    row.add(new DataFormatter().formatCellValue(c));
+                } else {
+                    // hope this works...
+                    row.add(c.getStringCellValue());
+                }
+            }
+        }
+        element.replaceTableData(table);
+        return Response.ok().type(MediaType.TEXT_XML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
     @POST
