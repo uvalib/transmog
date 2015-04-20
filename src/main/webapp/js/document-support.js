@@ -208,18 +208,18 @@ function addToolbarForTable(div) {
     table.addClass("table-bordered");
     table.addClass("table-striped");
 
-    var toolbar = '<span>Treat each row as a:</span><div class="top-bar"><select class="table-type-assignment"><option>Select type...</option>';
+    var toolbar = '<div class="top-bar"><div class="instructions">The following section has been identified to be tabular data.  As such, you may download it as a spreadsheet, upload a revised spreadsheet to replace it, or make bulk assignment. <br />To make a bulk assignment: <ol><li><select class="table-type-assignment"><option>Select row type...</option>';
     if (parentType in profile) {
         for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
             toolbar += '<option value="' + profile[parentType]["possibleChildren"][i] + '">' + getLabel(profile[parentType]["possibleChildren"][i]) + '</option>';
         }
     }
-    toolbar += '</select> </div> <button class=".btn table-assignment-button">Apply</button>';
-    toolbar += '<a href="' + partId + '/table.xlsx">download XLSX</a>';
-    toolbar += '<form><div><input type="file" /><input type="button" class="btn btn-default" value="Upload"></div></form>';
+    toolbar += '</select></li><li>Select types for each column in the table below</li><li>click <button class=".btn table-assignment-button">Apply</button></li></ol></div>';
+    toolbar += '</div>';
+    toolbar += '<div class="spreadsheet-download"><a href="' + partId + '/table.xlsx">Download XLSX</a><br /><form><input type="file" class="spreadsheet-file" /><input type="button" class="btn btn-default spreadsheet-upload-button" value="Upload Spreadsheet"></form></div>';
     div.prepend($(toolbar));
 
-    div.find(".btn").click(function() {
+    div.find(".spreadsheet-upload-button").click(function() {
         var submit = $(this);
         var tableDiv = submit.parent().parent().parent();
         var partId = tableDiv.attr("id");
@@ -265,7 +265,36 @@ function addToolbarForTable(div) {
 
     // attach assignment handlers
     div.find(".table-type-assignment").change(selectTableAssignment);
-    $('.table-assignment-button').click(assignTable);
+    div.find(".table-assignment-button").click(assignTable);
+    div.find(".row-type-assignment").change(validateTableForm);
+
+    validateTableForm();
+}
+
+function validateTableForm() {
+    $(".table-type-assignment").each(function() {
+        var tableDiv = $(this).parents('.UNASSIGNED_TABLE');
+        var applyButton = tableDiv.find(".table-assignment-button");
+        var columnSelects = tableDiv.find("table thead tr th select");
+        if ($(this).val() == 'Select row type...') {
+            applyButton.prop('disabled', true);
+            columnSelects.prop('disabled', true);
+            tableDiv.find("li").removeClass("completed");
+        } else {
+            tableDiv.find("li:eq(0)").addClass("completed");
+            tableDiv.find("li:eq(1)").addClass("completed");
+            columnSelects.prop('disabled', false);
+            applyButton.prop('disabled', false);
+            columnSelects.each(function() {
+                if ($(this).val() == "Select type for column...") {
+                    applyButton.prop('disabled', true);
+                    tableDiv.find("li:eq(1)").removeClass("completed");
+                }
+            });
+        }
+
+    });
+
 }
 
 function dragHelper(event) {
@@ -275,11 +304,15 @@ function dragHelper(event) {
 function selectTableAssignment() {
     var option = $(this);
     console.log("changed value to " + option.val());
-    option.parent().parent().find(".row-type-assignment").each(function() {
+    var table = option.parents('.UNASSIGNED_TABLE');
+    table.find(".row-type-assignment").each(function() {
         var select = $(this);
         var oldval = select.val();
         select.replaceWith($(getHtmlStringForRowTypeAssignment(option.val())));
+        validateTableForm();
     });
+    table.find(".row-type-assignment").change(validateTableForm);
+
 }
 
 function getHtmlStringForRowTypeAssignment(parentType) {
@@ -296,10 +329,10 @@ function getHtmlStringForRowTypeAssignment(parentType) {
 
 function assignTable() {
     var button = $(this);
-    var tableDiv = button.parent();
+    var tableDiv = button.parents('.UNASSIGNED_TABLE');
     var partId = tableDiv.attr("id");
     var option = tableDiv.find(".table-type-assignment");
-    if (option.val() == "Select type...") {
+    if (option.val() == "Select row type...") {
         alert("You must select a type to be applied to each row in the table!");
         return;
     }

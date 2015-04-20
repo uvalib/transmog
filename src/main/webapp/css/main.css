@@ -118,4 +118,21 @@ label {
 }
 
 
+.spreadsheet-download {
+    padding: .25em;
+}
+
+.spreadsheet-download .spreadsheet-file {
+    display: inline-block;
+}
+
+.spreadsheet-download .spreadsheet-upload-button {
+    display: inline-block;
+}
+
+.completed:after {
+    content: url('../check.png');
+}
+
+
 
