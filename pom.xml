@@ -3,11 +3,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>edu.virginia.lib</groupId>
-  <artifactId>findingaid</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>jar</packaging>
+  <artifactId>transmog</artifactId>
+  <version>0.1</version>
+  <packaging>war</packaging>
 
-  <name>findingaid</name>
+  <name>transmog</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -97,7 +97,7 @@
   </dependencies>
 
   <build>
-    <finalName>simple-webapp</finalName>
+    <finalName>transmog</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -140,5 +140,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>
