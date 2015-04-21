@@ -3,18 +3,34 @@
   <name>EAD encoding for Virginia Heritage Site</name>
   <description>A simple structure for organizing text into UVA-compliant EAD xml
     files.</description>
-  <transformation>uvaead-profile.xsl</transformation>
+  <transformation>uvaead-schema.xsl</transformation>
   <rootNodeTypeId>DOCUMENT</rootNodeTypeId>
 
-  <rules />
   <rules>
     <rule>
-      <description>when there's an unindented block with "Scope and Content" the following indented
-        paragraphs should be marked up as scope and content</description>
+      <description>When the first paragraph starts with "Letters of" or "Papers of", consider it the title.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Scope and Content\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+          <elementmatch type="pattern" id="title" position="first">(Letters of.*)|(Papers of.*)</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="title" path="TITLEPROPER" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        Matches a section that has a paragraph with just "Scope and Content" followed by
+        any number of paragraphs with 20 or more characters in them.  The first
+        one is assigned as the heading of the "general" section and each subsequent
+        paragraph is marked as a paragraph within the section.
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Scope and Content(\sInformation)?\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -29,7 +45,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Arrangement\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -44,7 +60,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Acquisition Information\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -59,7 +75,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Preferred Citation\s*</elementmatch>
-          <elementmatch type="pattern" id="paragraph">.*</elementmatch>
+          <elementmatch type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -75,7 +91,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Access and Use Restrictions\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -90,7 +106,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Access Restrictions\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -105,7 +121,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Use Restrictions\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">\s.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -122,7 +138,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">(Biographical Information\s*)|(Biographical/Historical Information\s)</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -137,7 +153,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Biographical Information\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -167,7 +183,6 @@
       <canHaveChild>ACQINFO</canHaveChild>
       <canHaveChild>SCOPECONTENT</canHaveChild>
       <canHaveChild>ARRANGEMENT</canHaveChild>
-      <canHaveChild>CONTENTLIST</canHaveChild>
       <canHaveChild>SERIES</canHaveChild>
       <canHaveChild>ITEM</canHaveChild>
     </nodeType>
@@ -301,19 +316,12 @@
       <canHaveChild>HEAD</canHaveChild>
     </nodeType>
     <nodeType>
-      <id>CONTENTLIST</id>
-      <label>Content List</label>
-      <description/>
-      <isTextNode>false</isTextNode>
-      <canHaveChild>PARAGRAPH</canHaveChild>
-      <canHaveChild>HEAD</canHaveChild>
-    </nodeType>
-    <nodeType>
       <id>SERIES</id>
       <label>Series</label>
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>SUBSERIES</canHaveChild>
+      <canHaveChild>ITEM</canHaveChild>
       <canHaveChild>UNITTITLE</canHaveChild>
       <canHaveChild>BOX</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>

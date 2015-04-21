@@ -39,6 +39,11 @@ public class SequentialPatternBlockMatcherTest {
             }
 
             @Override
+            public String getPosition() {
+                return "any";
+            }
+
+            @Override
             public boolean matchesMultiple() {
                 return true;
             }

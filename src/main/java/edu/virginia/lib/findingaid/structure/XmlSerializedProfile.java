@@ -291,13 +291,17 @@ public class XmlSerializedProfile extends Profile {
         public AssignmentFragmentAction getAction() {
 
             Set<String> omitSet = new HashSet<String>();
-            for (XmlSerializedOmit o : omit) {
-                omitSet.add(o.matchedId);
+            if (omit != null) {
+                for (XmlSerializedOmit o : omit) {
+                    omitSet.add(o.matchedId);
+                }
             }
 
             Map<String, String> idToPathMap = new HashMap<String, String>();
-            for (XmlSerializedAssign a : assign) {
-                idToPathMap.put(a.matchedId, a.path);
+            if (assign != null) {
+                for (XmlSerializedAssign a : assign) {
+                    idToPathMap.put(a.matchedId, a.path);
+                }
             }
             return new AssignmentFragmentAction(path, idToPathMap, omitSet);
 
@@ -305,6 +309,8 @@ public class XmlSerializedProfile extends Profile {
     }
 
     private static class XmlSerializedElementMatch implements ElementPattern {
+
+        @XmlAttribute private String position;
 
         @XmlAttribute private String type;
 
@@ -322,6 +328,16 @@ public class XmlSerializedProfile extends Profile {
         @Override
         public Pattern getPattern() {
             return Pattern.compile(pattern, Pattern.DOTALL);
+        }
+
+        @Override
+        public String getPosition() {
+            if (position == null) {
+                return "any";
+            } else {
+                return position;
+            }
+
         }
 
         @Override

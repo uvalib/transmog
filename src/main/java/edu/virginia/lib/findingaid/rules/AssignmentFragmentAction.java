@@ -27,17 +27,14 @@ public class AssignmentFragmentAction implements FragmentAction {
             if (omit.contains(m.getId())) {
                 e.removeFromParent();
             } else {
-                if (blockPlacement == null) {
+                if (blockPlacement == null && (blockPath != null && blockPath.length() > 0)) {
                     blockPlacement = e.getParent().locateOrCreatePath(blockPath, e.getIndexWithinParent());
                 }
                 final String path = matchToPath.get(m.getId());
-                if (path == null) {
-                    // this element is not mapped to any location, leave it alone
-                    //e.removeFromParent();
-                } else {
+                if (blockPlacement != null) {
                     e.moveElement(blockPlacement, blockPlacement.getChildren().size());
-                    e.assignPath(path);
                 }
+                e.assignPath(path);
             }
         }
     }

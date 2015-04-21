@@ -35,7 +35,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.TransformerException;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -162,6 +164,20 @@ public class FindingAid {
             return Response.status(404).build();
         }
         return Response.ok().type(MediaType.TEXT_XML_TYPE).entity(doc.getProfile().transformDocument(doc).toString()).build();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_XML)
+    @Path("/{id: [^/]*}/raw")
+    public Response getDocAsRawXML(@PathParam("id") final String findingAidId) throws ParserConfigurationException, IOException, SAXException, TransformerException, XMLStreamException {
+        Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        if (doc == null) {
+            return Response.status(404).build();
+        }
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        doc.writeOutXML(baos);
+        baos.close();
+        return Response.ok().type(MediaType.TEXT_XML_TYPE).entity(new String(baos.toByteArray(), "UTF-8")).build();
     }
 
     @PUT

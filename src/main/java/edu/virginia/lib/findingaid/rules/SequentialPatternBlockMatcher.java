@@ -64,11 +64,11 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
         }
 
         ElementMatch addsToMatch(Element el) {
-            if (required != null && matchesPattern(el, required.getPattern())) {
+            if (required != null && matchesPattern(el, required)) {
                 ElementMatch m = new ElementMatch(el, required.getName());
                 advancePatternCursor();
                 return m;
-            } else if (optional != null && matchesPattern(el, optional.getPattern())) {
+            } else if (optional != null && matchesPattern(el, optional)) {
                 fullMatch = true;
                 return new ElementMatch(el, optional.getName());
             } else {
@@ -91,11 +91,14 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
             }
         }
 
-        private boolean matchesPattern(Element el, Pattern p) {
+        private boolean matchesPattern(Element el, ElementPattern p) {
             if (!el.isUnassigned()) {
                 return false;
             } else {
-                final boolean matches = p.matcher(el.getContentAsString()).matches();
+                if (p.getPosition().equals("first") && el.getIndexWithinParent() != 0) {
+                    return false;
+                }
+                final boolean matches = p.getPattern().matcher(el.getContentAsString()).matches();
                 return matches;
             }
         }

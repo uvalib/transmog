@@ -32,7 +32,7 @@ function loadDocumentById(docid) {
 
                     $('#download_ead').unbind();
                     $('#download_ead').click(function() {
-                        var win = window.open('/ead', '_blank');
+                        var win = window.open('ead', '_blank');
                     });
 
                     // make it visible
