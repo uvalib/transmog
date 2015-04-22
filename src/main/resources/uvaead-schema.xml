@@ -21,6 +21,97 @@
       </action>
     </rule>
     <rule>
+      <description>When the first paragraph contains "Family Papers"</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="title" position="first">.*(Family Papers).*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="title" path="TITLEPROPER" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>break and Contents List</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="break">-{5,}</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="head">Contents List</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <omit matchedId="break" />
+          <assign matchedId="head" path="DSC_HEAD"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Contents List</description>
+      <match>
+        <block>
+          <elementmatch qualifier="+" type="pattern" id="head">Contents List</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="head" path="DSC_HEAD"/>
+        </assignblock>
+      </action>
+    </rule>
+
+    <!-- This pattern is just for one of our finding aids and may not be appropriate elsewhere -->
+    <rule>
+      <description>Special pattern for Series</description>
+      <match>
+        <block>
+          <elementmatch qualifier="+" type="pattern" id="title">Box-[fF]older.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="abstract">.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="extent">\d+ .*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="SERIES">
+          <assign matchedId="title" path="UNITTITLE"/>
+          <assign matchedId="abstract" path="SCOPECONTENT/PARAGRAPH"/>
+          <assign matchedId="extent" path="EXTENT"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Special pattern for Series 2</description>
+      <match>
+        <block>
+          <elementmatch qualifier="+" type="pattern" id="title">Box-[fF]older.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="extent">\d+ .*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="SERIES">
+          <assign matchedId="title" path="UNITTITLE"/>
+          <assign matchedId="extent" path="EXTENT"/>
+        </assignblock>
+      </action>
+    </rule>
+
+    <rule>
+      <description>Series</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="seriestitle">Series [IVX]+:.*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="content" inverse="true">Series [IVX]+:.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="SERIES">
+          <assign matchedId="seriestitle" path="UNITTITLE"/>
+          <assign matchedId="content" path="UNASSIGNED" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
       <description>
         Matches a section that has a paragraph with just "Scope and Content" followed by
         any number of paragraphs with 20 or more characters in them.  The first
@@ -71,22 +162,6 @@
       </action>
     </rule>
     <rule>
-      <description>Preferred Citation</description>
-      <match>
-        <block>
-          <elementmatch type="pattern" id="head">Preferred Citation\s*</elementmatch>
-          <elementmatch type="pattern" id="paragraph">.{20,}</elementmatch>
-        </block>
-      </match>
-      <action>
-        <assignblock path="PREFERCITE">
-          <omit matchedId="head" />
-          <assign matchedId="paragraph" path="PARAGRAPH"/>
-        </assignblock>
-      </action>
-    </rule>
-
-    <rule>
       <description>Access and Use restrictions</description>
       <match>
         <block>
@@ -131,8 +206,6 @@
         </assignblock>
       </action>
     </rule>
-
-
     <rule>
       <description>Biographical Information</description>
       <match>
@@ -149,15 +222,15 @@
       </action>
     </rule>
     <rule>
-      <description>Biographical Information, really leanient</description>
+      <description>Preferred Citation</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Biographical Information\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
+          <elementmatch type="pattern" id="head">Preferred Citation</elementmatch>
+          <elementmatch type="pattern" id="paragraph">.*</elementmatch>
         </block>
       </match>
       <action>
-        <assignblock path="BIOGHIST">
+        <assignblock path="PREFERCITE">
           <omit matchedId="head" />
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
@@ -176,6 +249,7 @@
       <canHaveChild>SUBTITLE</canHaveChild>
       <canHaveChild>ARCHIVIST</canHaveChild>
       <canHaveChild>MSS_NUM</canHaveChild>
+      <canHaveChild>DSC_HEAD</canHaveChild>
       <canHaveChild>USERESTRICT</canHaveChild>
       <canHaveChild>ACCESSRESTRICT</canHaveChild>
       <canHaveChild>PREFERCITE</canHaveChild>
@@ -197,6 +271,13 @@
     <nodeType>
       <id>ARCHIVIST</id>
       <label>Archivist</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>DSC_HEAD</id>
+      <label>Heading for Subordinate Components</label>
       <description></description>
       <isTextNode>true</isTextNode>
       <canHaveChild>TEXT</canHaveChild>
@@ -384,6 +465,7 @@
       <canHaveChild>BOX</canHaveChild>
       <canHaveChild>BOXFOLDER</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>
+      <canHaveChild>EXTENT</canHaveChild>
     </nodeType>
     <nodeType>
       <id>SUBSERIES</id>
@@ -399,6 +481,7 @@
       <canHaveChild>BOX</canHaveChild>
       <canHaveChild>BOXFOLDER</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>
+      <canHaveChild>EXTENT</canHaveChild>
     </nodeType>
     <nodeType>
       <id>ITEM</id>
@@ -410,6 +493,14 @@
       <canHaveChild>BOX</canHaveChild>
       <canHaveChild>BOXFOLDER</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>
+      <canHaveChild>EXTENT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>EXTENT</id>
+      <label>Extent</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
     </nodeType>
     <nodeType>
       <id>TEXT</id>

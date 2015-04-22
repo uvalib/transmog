@@ -318,6 +318,8 @@ public class XmlSerializedProfile extends Profile {
 
         @XmlAttribute private String qualifier;
 
+        @XmlAttribute private String inverse;
+
         @XmlValue private String pattern;
 
         @Override
@@ -343,6 +345,11 @@ public class XmlSerializedProfile extends Profile {
         @Override
         public boolean matchesMultiple() {
             return "+".equals(qualifier);
+        }
+
+        @Override
+        public boolean inverse() {
+            return "true".equalsIgnoreCase(inverse);
         }
     }
 

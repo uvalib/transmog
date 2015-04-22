@@ -100,7 +100,7 @@ public class Element implements Serializable {
         if (this.isUnassigned()) {
             for (Element child : children) {
                 if (!child.isUnassigned()) {
-                    throw new IllegalStateException("Unable to assign type \"" + type + " because child already has assignment!");
+                    throw new IllegalStateException("Unable to assign type \"" + type + " because child already has assignment (" + child.getType().getId() + ")!");
                 }
             }
         }
@@ -174,14 +174,14 @@ public class Element implements Serializable {
         }
     }
 
-    public void assignPath(String path) {
+    public void assignPath(Path path) {
         final Profile s = getProfile();
-        if (!path.contains("/")) {
-            this.assign(s.getNodeType(path));
+        if (path.depth() == 1) {
+            assign(s.getNodeType(path.getPathElement(0)));
         } else {
-            Element newParent = locateOrCreatePath(path.substring(0, path.lastIndexOf('/')), getChildren().size());
+            Element newParent = getParent().locateOrCreatePath(path.getParentPath(), -1);
             moveElement(newParent, newParent.getChildren().size());
-            assign(s.getNodeType(path.substring(path.lastIndexOf("/") + 1)));
+            assign(s.getNodeType(path.getLastPathElement()));
         }
     }
 
@@ -256,17 +256,17 @@ public class Element implements Serializable {
         return null;
     }
 
-    public Element locateOrCreatePath(String path, int index) {
+    public Element locateOrCreatePath(Path path, int index) {
         final Profile s = getProfile();
-        String[] pathTypes = path.split("/");
-        NodeType type = s.getNodeType(pathTypes[0]);
+        NodeType type = s.getNodeType(path.getPathElement(0));
         Element child = getFirstChildOfType(type);
         if (child == null) {
             child = new Element(type);
             addChild(child, index);
         }
-        if (pathTypes.length > 1) {
-            return child.locateOrCreatePath(path.substring(path.indexOf('/') + 1), -1);
+        final Path nextPath = path.relativeToFirst();
+        if (nextPath != null) {
+            return child.locateOrCreatePath(nextPath, -1);
         } else {
             return child;
         }

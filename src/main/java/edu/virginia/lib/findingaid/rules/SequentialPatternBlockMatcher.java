@@ -4,7 +4,6 @@ import edu.virginia.lib.findingaid.structure.Element;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class SequentialPatternBlockMatcher implements BlockMatcher {
 
@@ -20,7 +19,7 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
         for (int ei = 0; ei < el.getChildren().size(); ei ++) {
             List<ElementMatch> matches = reluctantMatch(el.getChildren(), ei, patterns);
             if (matches != null) {
-                ei += matches.size();
+                ei += (matches.size() - 1);
                 blockMatches.add(new DefaultBlockMatch(matches));
             }
         }
@@ -28,6 +27,7 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
     }
 
     private List<ElementMatch> reluctantMatch(List<Element> elements, int index, List<ElementPattern> patterns) {
+        //System.out.println("Reluctant match starting at index " + index + " (" + elements.get(index).getContentAsString() + ")");
         List<ElementMatch> match = new ArrayList<ElementMatch>();
         PatternCursor c = new PatternCursor(patterns);
         for (int i = index; i < elements.size(); i ++) {
@@ -68,25 +68,34 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
                 ElementMatch m = new ElementMatch(el, required.getName());
                 advancePatternCursor();
                 return m;
+            } else if (required != null && !matchesPattern(el, required)) {
+                return null;
             } else if (optional != null && matchesPattern(el, optional)) {
-                fullMatch = true;
                 return new ElementMatch(el, optional.getName());
             } else {
-                fullMatch = true;
                 return null;
             }
         }
 
+        /**
+         * Called when the current required pattern matches.
+         */
         private void advancePatternCursor() {
             if (cursor < patterns.size()) {
                 if (required.matchesMultiple()) {
                     optional = required;
+                } else {
+                    optional = null;
                 }
                 required = patterns.get(cursor++);
             } else if (required.matchesMultiple()) {
                 optional = required;
                 required = null;
+                fullMatch = true;
             } else {
+                required = null;
+                optional = null;
+                fullMatch = true;
                 // no more patterns
             }
         }
@@ -95,11 +104,11 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
             if (!el.isUnassigned()) {
                 return false;
             } else {
-                if (p.getPosition().equals("first") && el.getIndexWithinParent() != 0) {
+                if (p.getPosition().equals("first") && (p.inverse() ? el.getIndexWithinParent() == 0 : el.getIndexWithinParent() != 0)) {
                     return false;
                 }
                 final boolean matches = p.getPattern().matcher(el.getContentAsString()).matches();
-                return matches;
+                return p.inverse() ? !matches : matches;
             }
         }
 

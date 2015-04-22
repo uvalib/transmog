@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  version="2.0">
+  version="2.0" xmlns="urn:isbn:1-931666-22-9">
+  
+  <xsl:output indent="yes" />
+  
   <xsl:template match="DOCUMENT">
     <xsl:processing-instruction name="xml-model">href="http://text.lib.virginia.edu/dtd/eadVIVA/ead-ext.rng"
       type="application/xml"
@@ -21,14 +24,17 @@
         </titlepage>
       </frontmatter>
       <archdesc level="collection">
+        <did>
+          <unittitle label="Title"><xsl:apply-templates mode="TITLEPROPER" select="TITLEPROPER/*" /></unittitle>
+        </did>
         <descgrp type="admininfo">
           <xsl:apply-templates select="*" mode="ADMININFO" />
         </descgrp>
         <xsl:apply-templates select="*" mode="ARCHDESC" />
+        <dsc>
+          <xsl:apply-templates select="*" mode="DSC" />
+        </dsc>
       </archdesc>
-      <dsc>
-        <xsl:apply-templates select="*" mode="DSC" />
-      </dsc>
     </ead>
   </xsl:template>
 
@@ -36,8 +42,19 @@
 
   <xsl:template match="SERIES" mode="DSC">
     <c01 level="series">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />  
+      </did>
       <xsl:apply-templates select="*" mode="C01" />
     </c01>
+  </xsl:template>
+
+  <xsl:template match="UNITTITLE" mode="DID">
+    <unittitle><xsl:apply-templates /></unittitle>   
+  </xsl:template>
+  
+  <xsl:template match="EXTENT" mode="DID">
+    <physdesc><extent><xsl:apply-templates /></extent></physdesc>   
   </xsl:template>
   
   <xsl:template match="ITEM" mode="DSC">
@@ -57,23 +74,23 @@
       <xsl:apply-templates select="*" mode="C02" />
     </c02>
   </xsl:template>
-
-  <xsl:template match="SCOPECONTENT" mode="ARCHDESC">
+  
+  <xsl:template match="SCOPECONTENT" mode="ARCHDESC C02 C01 C03">
     <scopecontent>
       <xsl:apply-templates select="*" mode="SCOPECONTENT" />
     </scopecontent>
   </xsl:template>
   
   <xsl:template match="BIOGHIST" mode="ARCHDESC">
-    <scopecontent>
+    <bioghist>
       <xsl:apply-templates select="*" mode="BIOGHIST" />
-    </scopecontent>
+    </bioghist>
   </xsl:template>
   
   <xsl:template match="ARRANGMENT" mode="ARCHDESC">
-    <scopecontent>
+    <arrangment>
       <xsl:apply-templates select="*" mode="ARRANGEMENT" />
-    </scopecontent>
+    </arrangment>
   </xsl:template>
   
   

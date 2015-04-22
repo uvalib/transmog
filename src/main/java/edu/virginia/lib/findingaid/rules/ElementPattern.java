@@ -15,4 +15,9 @@ public interface ElementPattern {
     public String getPosition();
 
     public boolean matchesMultiple();
+
+    /**
+     * If true, only blocks that DON'T match the pattern are considered matches.
+     */
+    public boolean inverse();
 }
