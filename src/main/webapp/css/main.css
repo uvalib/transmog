@@ -134,5 +134,11 @@ label {
     content: url('../check.png');
 }
 
+#try-it-out {
+    border-radius: 25px;
+    border: 8px solid #dc5c01;
+    padding: 20px;
+}
+
 
 
