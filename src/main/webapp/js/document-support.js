@@ -22,17 +22,17 @@ function loadDocumentById(docid) {
                 success: function(json) {
                     profile = json;
 
+                    markUpDiv($('.ROOT'));
                     markUpDiv($('.ROOT').find(".UNASSIGNED, .ASSIGNED, .UNASSIGNED_TABLE"));
 
                     $('.ROOT').addClass('well');
-                    addDropZones($('.ROOT'));
 
                     // add a download button
-                    $('<button type="button" class="btn btn-default" aria-label="Left Align" id="download_ead"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download EAD XML</button>').insertAfter($('.ROOT'))
+                    $('<button type="button" class="btn btn-default" aria-label="Left Align" id="download_ead"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download XML</button>').insertAfter($('.ROOT'))
 
                     $('#download_ead').unbind();
                     $('#download_ead').click(function() {
-                        var win = window.open('ead', '_blank');
+                        var win = window.open('xml', '_blank');
                     });
 
                     // make it visible
@@ -47,7 +47,7 @@ function markUpDiv(jquery) {
     // format the HTML and add labels and functions
     jquery.each(function() {
         var div = $(this);
-        div.find("span").each(addTextEditLinks);
+        div.find(">span").each(addTextEditLinks);
 
         if (div.hasClass('UNASSIGNED')) {
             addToolbarForUnassigned(div);
@@ -216,7 +216,7 @@ function addToolbarForTable(div) {
     }
     toolbar += '</select></li><li>Select types for each column in the table below</li><li>click <button class=".btn table-assignment-button">Apply</button></li></ol></div>';
     toolbar += '</div>';
-    toolbar += '<div class="spreadsheet-download"><a href="' + partId + '/table.xlsx">Download XLSX</a><br /><form><input type="file" class="spreadsheet-file" /><input type="button" class="btn btn-default spreadsheet-upload-button" value="Upload Spreadsheet"></form></div>';
+    toolbar += '<div class="spreadsheet-download"><a href="' + partId + '/table.xlsx">Download Spreadsheet</a><br /><form><input type="file" class="spreadsheet-file" /><input type="button" class="btn btn-default spreadsheet-upload-button" value="Upload Spreadsheet"></form></div>';
     div.prepend($(toolbar));
 
     div.find(".spreadsheet-upload-button").click(function() {

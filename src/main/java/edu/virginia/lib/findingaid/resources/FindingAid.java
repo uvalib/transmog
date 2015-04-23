@@ -123,7 +123,7 @@ public class FindingAid {
     @GET
     @Produces(MediaType.TEXT_HTML)
     @Path("/{id: [^/]*}/edit")
-    public Response getDocumentPage(@PathParam("id") final String findingAidId) {
+    public Response getDocumentPage(@PathParam("id") final String findingAidId) throws IOException {
         Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         if (doc == null) {
             return Response.status(404).build();
@@ -148,6 +148,7 @@ public class FindingAid {
                 "  </head>\n" +
                 "  <body>\n" +
                 "    <div class=\"container\">\n" +
+                readContent(getClass().getClassLoader().getResourceAsStream("document-notes.html")) +
                 "      <div class=\"row\" id=\"workspace\">\n" +
                 "      </div>\n" +
                 "    </div>\n" +
@@ -157,7 +158,7 @@ public class FindingAid {
 
     @GET
     @Produces(MediaType.TEXT_XML)
-    @Path("/{id: [^/]*}/ead")
+    @Path("/{id: [^/]*}/xml")
     public Response getDocAsEADXML(@PathParam("id") final String findingAidId) throws ParserConfigurationException, IOException, SAXException, TransformerException {
         Element doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         if (doc == null) {
