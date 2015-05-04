@@ -137,6 +137,9 @@ public class FindingAid {
                 "    <script src=\"../../../js/jquery-2.1.3.js\"></script>\n" +
                 "    <script src=\"../../../js/jquery-ui.js\"></script>\n" +
                 "    <script src=\"../../../js/bootstrap.js\"></script>\n" +
+                "     <link rel=\"stylesheet\" href=\"../../../css/jquery-ui.css\">\n" +
+                "     <link rel=\"stylesheet\" href=\"../../../css/jquery-ui.structure.css\">\n" +
+                "     <link rel=\"stylesheet\" href=\"../../../css/jquery-ui.theme.css\">\n" +
                 "    <link rel=\"stylesheet\" href=\"../../../css/bootstrap.min.css\">\n" +
                 "    <link rel=\"stylesheet\" href=\"../../../css/main.css\">\n" +
                 "    <script src=\"../../../js/document-support.js\"></script>\n" +

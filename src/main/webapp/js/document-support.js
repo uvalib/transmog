@@ -71,15 +71,35 @@ function addTextEditLinks() {
         var contents = link.text();
         var partId = link.parent().parent().attr("id");
         var fragmentId = link.parent().attr("id");
-        var newValue = prompt("Edit this value", contents);
-        if (newValue != null) {
-            $.ajax({
-                type: "PUT",
-                url: partId + "/" + fragmentId,
-                data: newValue,
-                success: replaceDocumentElement
-            });
-        }
+        var type = link.parent().attr("class");
+        var $dialog = $('<div id="dialog" title="Update Text"><form><label for="text_content">Text Fragment</label><textarea id="text_content">' + contents + '</textarea><label for="text_type">Markup Type</label><input type="text" id="text_type" value="' + type + '" /></form></div>');
+        $dialog.insertAfter(link);
+        $('#dialog').dialog({
+            autoOpen: true,
+            modal: true,
+            height: 300,
+            width: 350,
+            buttons: {
+                "Save Changes": function() {
+                    var newValue = $('#text_content').val();
+                    var newType = $('#text_type').val();
+                    $.ajax({
+                        type: "PUT",
+                        url: partId + "/" + fragmentId + '?type=' + newType,
+                        data: newValue,
+                        success: replaceDocumentElement
+                    });
+                    $dialog.dialog("close");
+
+                },
+                Cancel: function() {
+                    $dialog.dialog("close");
+                }
+            },
+            close: function() {
+               $dialog.remove();
+            }
+        });
     });
 }
 
@@ -99,6 +119,7 @@ function addDropZones(div) {
         $(this).droppable({
             greedy: true,
             hoverClass: "drop-hover",
+            accept: ".UNASSIGNED, .ASSIGNED, .UNASSIGNED_TABLE",
             drop: dropComponent
         });
 
