@@ -1,9 +1,13 @@
 package edu.virginia.lib.findingaid.structure;
 
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -301,7 +305,7 @@ public class Element implements Serializable {
     public void writeOutXML(OutputStream os) throws XMLStreamException {
         XMLOutputFactory f = XMLOutputFactory.newFactory();
         XMLEventWriter w = f.createXMLEventWriter(os);
-        emitEADXMLEvents(w);
+        emitRawXMLEvents(w);
         w.close();
     }
 
@@ -364,17 +368,19 @@ public class Element implements Serializable {
         return XMLEventFactory.newInstance();
     }
 
-    private void emitEADXMLEvents(XMLEventWriter w) throws XMLStreamException {
+    private void emitRawXMLEvents(XMLEventWriter w) throws XMLStreamException {
         XMLEventFactory f = XMLEventFactory.newInstance();
         w.add(f.createStartDocument());
         emitElement(w);
         w.add(f.createEndDocument());
     }
 
-    private void emitElement(XMLEventWriter w) throws XMLStreamException {
+    void emitElement(XMLEventWriter w) throws XMLStreamException {
         w.add(xml().createStartElement("", "", type.getId()));
+        w.add(xml().createAttribute("id", this.id));
         for (Fragment f : fragments) {
             w.add(xml().createStartElement("", "", "span"));
+            w.add(xml().createAttribute("id", f.getId()));
             w.add(xml().createAttribute("type", f.getType()));
             w.add(xml().createCharacters(f.getText()));
             w.add(xml().createEndElement("", "", "span"));
@@ -385,11 +391,47 @@ public class Element implements Serializable {
         w.add(xml().createEndElement("", "", type.getId()));
     }
 
+    static Element parseElement(final StartElement startTag, XMLEventReader r, Profile p) throws XMLStreamException {
+        final String typeId = startTag.asStartElement().getName().getLocalPart();
+        final String id = startTag.getAttributeByName(new QName("", "id")).getValue();
+        if (p.getNodeType(typeId) == null) {
+            throw new RuntimeException("Unrecognized type \"" + typeId + "\" in profile \"" + p.getProfileName() + "\"...");
+        }
+        Element element = new Element(p.getNodeType(typeId));
+        element.id = id;
+        while (r.hasNext()) {
+            final XMLEvent next = r.nextEvent();
+            if (next.isStartElement()) {
+                final StartElement s = next.asStartElement();
+                if (s.getName().getLocalPart().equals("span")) {
+                    final String type = s.getAttributeByName(new QName("", "type")).getValue();
+                    final String fragId = s.getAttributeByName(new QName("", "id")).getValue();
+                    final String value = Document.getText(r);
+                    element.fragments.add(new Fragment(fragId, type, value));
+                } else {
+                    element.addChild(parseElement(s, r, p));
+                }
+            } else if (next.isEndElement()) {
+                return element;
+            }
+        }
+        throw new RuntimeException("Malformed XML: element " + startTag + " never ended!");
+    }
+
     public boolean isUnassigned() {
         return this.type.equals(getProfile().getUnassignedType());
     }
 
     public boolean isUnassignedTable() {
         return this.type.equals(getProfile().getTableType());
+    }
+
+    public boolean equals(Element other) {
+        return this.printTreeXHTML().equals(other.printTreeXHTML());
+    }
+
+    public int hashCode() {
+        return this.printTreeXHTML().hashCode();
+
     }
 }

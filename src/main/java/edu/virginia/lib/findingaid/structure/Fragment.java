@@ -10,6 +10,10 @@ public class Fragment {
 
     public static final String BOLD_TYPE = "bold";
 
+    public static final String SUPERSCRIPT_TYPE = "superscript";
+
+    public static final String SUBSCRIPT_TYPE = "subscript";
+
     public static final String CUSTOM_TYPE_PREFIX = "custom_";
 
     String id;
@@ -19,7 +23,11 @@ public class Fragment {
     String content;
 
     public Fragment(String type, String text) {
-        this.id = UUID.randomUUID().toString();
+        this(UUID.randomUUID().toString(), type, text);
+    }
+
+    Fragment(String id, String type, String text) {
+        this.id = id;
         this.type = type;
         this.content = text;
     }
@@ -67,4 +75,13 @@ public class Fragment {
     public static Fragment boldFragment(String content) {
         return new Fragment(BOLD_TYPE, content);
     }
+
+    public static Fragment superscriptFragment(String content) {
+        return new Fragment(SUPERSCRIPT_TYPE, content);
+    }
+
+    public static Fragment subscriptFragment(String content) {
+        return new Fragment(SUBSCRIPT_TYPE, content);
+    }
+
 }
