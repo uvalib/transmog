@@ -58,7 +58,11 @@ public class WordParser {
         Element root = new Element(profile.getRootNodeType());
 
         XWPFHeaderFooterPolicy policy = new XWPFHeaderFooterPolicy(doc);
-        root.addChild(new Element(profile.getUnassignedType(), policy.getDefaultHeader().getText()));
+        if (policy == null || policy.getDefaultHeader() == null || policy.getDefaultHeader().getText() == null) {
+            // skip header
+        } else {
+            root.addChild(new Element(profile.getUnassignedType(), policy.getDefaultHeader().getText()));
+        }
         for (XWPFParagraph p : doc.getParagraphs()) {
             processParagraph(p, root, profile);
         }
