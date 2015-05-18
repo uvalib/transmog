@@ -3,6 +3,7 @@ package edu.virginia.lib.findingaid.service;
 import edu.virginia.lib.findingaid.WordParser;
 import edu.virginia.lib.findingaid.rules.BlockMatch;
 import edu.virginia.lib.findingaid.rules.Rule;
+import edu.virginia.lib.findingaid.structure.Document;
 import edu.virginia.lib.findingaid.structure.Element;
 import edu.virginia.lib.findingaid.structure.Profile;
 import org.apache.poi.util.IOUtils;
@@ -22,7 +23,7 @@ public class DocumentConverter {
         p = new WordParser();
     }
 
-    public Element convertWordDoc(InputStream wordDoc, Profile s) throws IOException {
+    public Document convertWordDoc(InputStream wordDoc, Profile s, String filename) throws IOException {
         File f = File.createTempFile("temporary", ".doc");
         FileOutputStream fos = new FileOutputStream(f);
         try {
@@ -31,20 +32,20 @@ public class DocumentConverter {
             fos.close();
         }
         try {
-            return convertWordDoc(f, s);
+            return convertWordDoc(f, s, filename);
         } finally {
             f.delete();
         }
     }
 
-    public Element convertWordDoc(File doc, Profile s) throws IOException {
+    public Document convertWordDoc(File doc, Profile s, String filename) throws IOException {
         final Element root = p.processDocument(doc, s);
 
         annotateTables(root);
 
         applyRules(root, s);
 
-        return root;
+        return new Document(root, filename);
     }
 
     /**
@@ -53,7 +54,7 @@ public class DocumentConverter {
      */
     private void annotateTables(Element el) {
         TableBuilder b = new TableBuilder();
-        for (Element child : new ArrayList<Element>(el.getChildren())) {
+        for (Element child : new ArrayList<>(el.getChildren())) {
             b.addRow(child);
         }
         b.finish();
