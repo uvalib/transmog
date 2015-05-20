@@ -2,34 +2,45 @@ package edu.virginia.lib.findingaid.structure;
 
 import java.util.UUID;
 
+/**
+ * A section of text within a paragraph that, as far as Transmog knows,
+ * has consistent formatting.
+ */
 public class Fragment {
 
-    public static final String TEXT_TYPE = "text";
+    public static final String ITALIC = "italic";
 
-    public static final String ITALIC_TYPE = "italic";
+    public static final String BOLD = "bold";
 
-    public static final String BOLD_TYPE = "bold";
+    public static final String STRIKETHROUGH = "strikethrough";
 
-    public static final String SUPERSCRIPT_TYPE = "superscript";
+    public static final String SUPERSCRIPT = "superscript";
 
-    public static final String SUBSCRIPT_TYPE = "subscript";
-
-    public static final String CUSTOM_TYPE_PREFIX = "custom_";
+    public static final String SUBSCRIPT = "subscript";
 
     String id;
 
-    String type;
+    String[] styles;
 
     String content;
 
-    public Fragment(String type, String text) {
-        this(UUID.randomUUID().toString(), type, text);
+    public Fragment(final String text) {
+        this(UUID.randomUUID().toString(), new String[0], text);
     }
 
-    Fragment(String id, String type, String text) {
+    public Fragment(final String text, final String[] styles) {
+        this(UUID.randomUUID().toString(), styles, text);
+    }
+
+    Fragment(String id, String[] styles, String text) {
         this.id = id;
-        this.type = type;
+        this.styles = styles;
         this.content = text;
+        for (String style : styles) {
+            if (style.contains(" ")) {
+                throw new IllegalArgumentException("Style types may not contain spaces (\"" + style + "\")!");
+            }
+        }
     }
 
     public String getId() {
@@ -44,44 +55,22 @@ public class Fragment {
         this.content = text;
     }
 
-    public String getType() {
-        return this.type;
+    public String[] getStyles() {
+        return this.styles;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setStyles(String[] styles) {
+        this.styles = styles;
     }
 
-    public boolean isPlainText() {
-        return this.type.equals(TEXT_TYPE);
+    public String getStylesAsSpaceDelimitedString() {
+        StringBuffer result = new StringBuffer();
+        for (String s : styles) {
+            if (result.length() > 0) {
+                result.append(" ");
+            }
+            result.append(s);
+        }
+        return result.toString();
     }
-
-    public boolean isItalic() {
-        return this.type.equals(ITALIC_TYPE);
-    }
-
-    public boolean isBoldText() {
-        return this.type.equals(BOLD_TYPE);
-    }
-
-    public static Fragment textFragment(final String content) {
-        return new Fragment(TEXT_TYPE, content);
-    }
-
-    public static Fragment italicFragment(String content) {
-        return new Fragment(ITALIC_TYPE, content);
-    }
-
-    public static Fragment boldFragment(String content) {
-        return new Fragment(BOLD_TYPE, content);
-    }
-
-    public static Fragment superscriptFragment(String content) {
-        return new Fragment(SUPERSCRIPT_TYPE, content);
-    }
-
-    public static Fragment subscriptFragment(String content) {
-        return new Fragment(SUBSCRIPT_TYPE, content);
-    }
-
 }

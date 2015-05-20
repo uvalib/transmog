@@ -15,8 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static edu.virginia.lib.findingaid.structure.Fragment.textFragment;
-
 public class Element implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -36,7 +34,7 @@ public class Element implements Serializable {
     }
 
     public Element(NodeType type, String content) {
-        this(type, Collections.singletonList(textFragment(content)));
+        this(type, Collections.singletonList(new Fragment(content)));
     }
 
     public Element(NodeType type, List<Fragment> f) {
@@ -339,7 +337,7 @@ public class Element implements Serializable {
         }
 
         for (Fragment f : fragments) {
-            response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getType() + "\">" + f.getText() + "</span>");
+            response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">" + f.getText() + "</span>");
         }
 
         if (children != null) {
@@ -381,7 +379,7 @@ public class Element implements Serializable {
         for (Fragment f : fragments) {
             w.add(xml().createStartElement("", "", "span"));
             w.add(xml().createAttribute("id", f.getId()));
-            w.add(xml().createAttribute("type", f.getType()));
+            w.add(xml().createAttribute("style", f.getStylesAsSpaceDelimitedString()));
             w.add(xml().createCharacters(f.getText()));
             w.add(xml().createEndElement("", "", "span"));
             w.add(xml().createCharacters("\n"));
@@ -406,10 +404,10 @@ public class Element implements Serializable {
             if (next.isStartElement()) {
                 final StartElement s = next.asStartElement();
                 if (s.getName().getLocalPart().equals("span")) {
-                    final String type = s.getAttributeByName(new QName("", "type")).getValue();
+                    final String[] styles = s.getAttributeByName(new QName("", "style")).getValue().split(" ");
                     final String fragId = s.getAttributeByName(new QName("", "id")).getValue();
                     final String value = Document.getText(r);
-                    element.fragments.add(new Fragment(fragId, type, value));
+                    element.fragments.add(new Fragment(fragId, styles, value));
                 } else {
                     element.addChild(parseElement(s, r, p));
                 }

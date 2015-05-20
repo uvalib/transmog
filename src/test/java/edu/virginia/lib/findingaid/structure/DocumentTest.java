@@ -43,7 +43,7 @@ public class DocumentTest {
                 addRandomChildren(number, newChild, maxDepth - 1);
             }
             if (el.getType().isTextNode()) {
-                el.addFragment(new Fragment("text", "random number " + Math.random()));
+                el.addFragment(new Fragment("random number " + Math.random()));
             }
         }
 

@@ -8,6 +8,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.IRunElement;
+import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -18,6 +19,9 @@ import javax.xml.stream.XMLStreamException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static org.apache.poi.xwpf.usermodel.VerticalAlign.SUBSCRIPT;
 
 public class WordParser {
 
@@ -86,24 +90,35 @@ public class WordParser {
 
             for (IRunElement i : p.getIRuns()) {
                 XWPFRun r = (XWPFRun) i;
+                ArrayList<String> styles = new ArrayList<>();
                 if (r.isItalic()) {
-                    if (plainText.length() > 0) {
-                        currentEl.addFragment(Fragment.textFragment(plainText.toString()));
-                        plainText = new StringBuffer();
-                    }
-                    currentEl.addFragment(Fragment.italicFragment(r.toString()));
-                } else if (r.isBold()) {
-                    if (plainText.length() > 0) {
-                        currentEl.addFragment(Fragment.textFragment(plainText.toString()));
-                        plainText = new StringBuffer();
-                    }
-                    currentEl.addFragment(Fragment.boldFragment(r.toString()));
-                } else {
+                    styles.add(Fragment.ITALIC);
+                }
+                if (r.isBold()) {
+                    styles.add(Fragment.BOLD);
+                }
+                if (r.isStrike()) {
+                    styles.add(Fragment.STRIKETHROUGH);
+                }
+                if (r.getSubscript().equals(VerticalAlign.SUBSCRIPT)) {
+                    styles.add(Fragment.SUBSCRIPT);
+                }
+                if (r.getSubscript().equals(VerticalAlign.SUPERSCRIPT)) {
+                    styles.add(Fragment.SUPERSCRIPT);
+                }
+
+                if (styles.isEmpty()) {
                     plainText.append(r.toString());
+                } else {
+                    if (plainText.length() > 0) {
+                        currentEl.addFragment(new Fragment(plainText.toString()));
+                        plainText = new StringBuffer();
+                    }
+                    currentEl.addFragment(new Fragment(r.toString(), styles.toArray(new String[0])));
                 }
             }
             if (plainText.length() > 0) {
-                currentEl.addFragment(Fragment.textFragment(plainText.toString()));
+                currentEl.addFragment(new Fragment(plainText.toString()));
             }
             if (currentEl.getContentAsString().trim().length() > 0) {
                 root.addChild(currentEl);

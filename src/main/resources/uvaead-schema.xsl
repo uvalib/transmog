@@ -161,15 +161,7 @@
     <xsl:apply-templates select="*" />
   </xsl:template>
 
-  <xsl:template match="span[@type='text']" mode="#all">
-    <xsl:value-of select="text()" />
-  </xsl:template>
-
-  <xsl:template match="span[@type='italic']" mode="#all">
-    <xsl:value-of select="text()" />
-  </xsl:template>
-
-  <xsl:template match="span[@type='bold']" mode="#all">
+  <xsl:template match="span" mode="#all">
     <xsl:value-of select="text()" />
   </xsl:template>
 

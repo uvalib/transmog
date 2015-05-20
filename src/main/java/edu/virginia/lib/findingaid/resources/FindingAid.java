@@ -190,12 +190,12 @@ public class FindingAid {
 
     @PUT
     @Path("/{id: [^/]*}/{partId: [^/]*}/{fragmentId: [^/]*}")
-    public Response updateFragmentText(InputStream value, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @PathParam("fragmentId") final String fragmentId, @QueryParam("type") final String fragmentType) throws IOException {
+    public Response updateFragmentText(InputStream value, @PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @PathParam("fragmentId") final String fragmentId, @QueryParam("type") final String styles) throws IOException {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.getRootElement().findById(partId);
         final Fragment fragment = element.getFragment(fragmentId);
-        if (fragmentType != null) {
-            fragment.setType(fragmentType);
+        if (styles != null) {
+            fragment.setStyles(styles.split(" "));
         }
         fragment.setText(readContent(value));
         DocumentStore.getDocumentStore().saveDocument(doc);

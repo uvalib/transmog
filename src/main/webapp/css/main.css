@@ -87,6 +87,16 @@ span a {
     color: black;
 }
 
+.superscript {
+    font-size: .5em;
+    vertical-align: super;
+}
+
+.subscript {
+    font-size: .5em;
+    vertical-align: sub;
+}
+
 #dragging {
     border: 3px solid orangered;
     padding: .25em;
