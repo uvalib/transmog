@@ -11,7 +11,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.UUID;
 
 public class Document {
 
@@ -21,12 +20,6 @@ public class Document {
 
     private Profile profile;
 
-    private String versionId;
-
-    private String previousVersionId;
-
-    private String nextVersionId;
-
     private Document() {
     }
 
@@ -34,25 +27,10 @@ public class Document {
         this.rootEl = root;
         this.filename = filename;
         this.profile = root.getProfile();
-        this.previousVersionId = null;
-        this.nextVersionId = null;
-        this.versionId = String.valueOf(System.currentTimeMillis());
     }
 
     public String getId() {
         return rootEl.id;
-    }
-
-    public String getVersionId() {
-        return this.versionId;
-    }
-
-    public String getPreviousVersionId() {
-        return this.previousVersionId;
-    }
-
-    public String getNextVersionId() {
-        return this.nextVersionId;
     }
 
     public Element getRootElement() {
@@ -72,36 +50,25 @@ public class Document {
         XMLEventWriter w = XMLOutputFactory.newFactory().createXMLEventWriter(os);
         w.add(f.createStartDocument());
         w.add(f.createStartElement("", "", "document"));
+        w.add(f.createCharacters("\n"));
 
         // add the filename
         w.add(f.createStartElement("", "", "filename"));
         w.add(f.createCharacters(getOriginalFilename()));
         w.add(f.createEndElement("", "", "filename"));
+        w.add(f.createCharacters("\n"));
 
         // add the profile
         w.add(f.createStartElement("", "", "profile"));
         w.add(f.createCharacters(getProfile().getProfileName()));
         w.add(f.createEndElement("", "", "profile"));
-
-        // add the version information
-        if (previousVersionId != null) {
-            w.add(f.createStartElement("", "", "previous"));
-            w.add(f.createCharacters(previousVersionId));
-            w.add(f.createEndElement("", "", "previous"));
-        }
-        w.add(f.createStartElement("", "", "version"));
-        w.add(f.createCharacters(versionId));
-        w.add(f.createEndElement("", "", "version"));
-        if (nextVersionId != null) {
-            w.add(f.createStartElement("", "", "next"));
-            w.add(f.createCharacters(nextVersionId));
-            w.add(f.createEndElement("", "", "next"));
-        }
+        w.add(f.createCharacters("\n"));
 
         // add the element tree
         w.add(f.createStartElement("", "", "root"));
         getRootElement().emitElement(w);
         w.add(f.createEndElement("", "", "root"));
+        w.add(f.createCharacters("\n"));
 
         w.add(f.createEndElement("", "", "document"));
         w.add(f.createEndDocument());
@@ -119,12 +86,6 @@ public class Document {
                     d.filename = getText(r);
                 } else if (localName.equals("profile")) {
                     d.profile = profiles.getProfile(getText(r));
-                } else if (localName.equals("previous")) {
-                    d.previousVersionId = getText(r);
-                } else if (localName.equals("version")) {
-                    d.versionId = getText(r);
-                } else if (localName.equals("next")) {
-                    d.nextVersionId = getText(r);
                 } else if (localName.equals("root")) {
                     while (r.hasNext()) {
                         final XMLEvent n = r.nextEvent();

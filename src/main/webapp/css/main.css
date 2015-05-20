@@ -146,5 +146,15 @@ h1 {
     margin-left: 1em;
 }
 
+#floating-menu {
+    position: fixed;
+    left: 5px;
+    top: 5px;
+}
+
+#floating-menu button {
+    margin-right: 5px;
+}
+
 
 

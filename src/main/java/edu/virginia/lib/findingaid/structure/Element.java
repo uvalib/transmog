@@ -384,11 +384,13 @@ public class Element implements Serializable {
             w.add(xml().createAttribute("type", f.getType()));
             w.add(xml().createCharacters(f.getText()));
             w.add(xml().createEndElement("", "", "span"));
+            w.add(xml().createCharacters("\n"));
         }
         for (Element child : children) {
             child.emitElement(w);
         }
         w.add(xml().createEndElement("", "", type.getId()));
+        w.add(xml().createCharacters("\n"));
     }
 
     static Element parseElement(final StartElement startTag, XMLEventReader r, Profile p) throws XMLStreamException {

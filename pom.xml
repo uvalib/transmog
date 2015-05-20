@@ -66,6 +66,11 @@
       <artifactId>Saxon-HE</artifactId>
       <version>9.6.0-5</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jgit</groupId>
+      <artifactId>org.eclipse.jgit</artifactId>
+      <version>3.7.1.201504261725-r</version>
+    </dependency>
 
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
@@ -145,5 +150,12 @@
       </plugin>
     </plugins>
   </build>
+
+  <repositories>
+    <repository>
+      <id>jgit-repository</id>
+      <url>https://repo.eclipse.org/content/groups/releases/</url>
+    </repository>
+  </repositories>
 
 </project>

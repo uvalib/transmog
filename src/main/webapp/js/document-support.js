@@ -27,13 +27,30 @@ function loadDocumentById(docid) {
 
                     $('.ROOT').addClass('well');
 
-                    // add a download button
-                    $('<button type="button" class="btn btn-default" aria-label="Left Align" id="download_ead"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download XML</button>').insertAfter($('.ROOT'))
 
+                    $('<div id="floating-menu" />').insertBefore($('.ROOT'));
+
+                    // add a download button
+                    $('<button type="button" class="btn btn-default" aria-label="Left Align" id="download_ead"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Download XML</button>').appendTo($('#floating-menu'));
                     $('#download_ead').unbind();
                     $('#download_ead').click(function() {
                         var win = window.open('xml', '_blank');
                     });
+
+
+                    // add Undo button
+                    $('<button type="button" class="btn btn-default" aria-label="Left Align" id="undo">Undo last change</button>').appendTo($('#floating-menu'));
+                    $('#undo').unbind();
+                    $('#undo').click(function() {
+                        $.ajax({
+                            type: "POST",
+                            url: "undo",
+                            data: "",
+                            success: replaceDocumentElement,
+                            error: function() { alert("No more actions in undo history."); }
+                        });
+                    });
+
 
                     // make it visible
                     $('#loading_document').hide();

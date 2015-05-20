@@ -212,6 +212,18 @@ public class FindingAid {
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
+    @POST
+    @Path("/{id: [^/]*}/undo")
+    public Response undoLastChange(@PathParam("id") final String findingAidId) {
+        final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        Document updated = DocumentStore.getDocumentStore().undoLastChange(doc);
+        if (updated == null) {
+            return Response.status(404).build();
+        } else {
+            return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(updated.getRootElement().printTreeXHTML().toString()).build();
+        }
+    }
+
     @GET
     @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @Path("/{id: [^/]*}/{partId: [^/]*}/table.xlsx")
