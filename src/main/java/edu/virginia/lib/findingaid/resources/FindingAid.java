@@ -88,25 +88,14 @@ public class FindingAid {
         return o.build();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public JsonArray listFindingAids(@PathParam("id") final String findingAidId) {
-        final JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for (String id : DocumentStore.getDocumentStore().listDocumentIds()) {
-            arrayBuilder.add(id);
-        }
-        return arrayBuilder.build();
-    }
-
     @POST
     @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}")
     public Response addDocument(@PathParam("id") final String findingAidId, @QueryParam("profileId") final String profileName, InputStream documentStream) throws IOException {
-        String id = UUID.randomUUID().toString();
         final Document doc = new DocumentConverter().convertWordDoc(documentStream, getRequestedProfileOrDefault(profileName), findingAidId);
-        DocumentStore.getDocumentStore().addDocument(doc, id);
-        System.out.println("Added document... " + id);
-        return Response.status(Response.Status.OK).contentLocation(UriBuilder.fromResource(FindingAid.class).path(id).build()).build();
+        DocumentStore.getDocumentStore().addDocument(doc);
+        System.out.println("Added document... " + doc.getId());
+        return Response.status(Response.Status.OK).contentLocation(UriBuilder.fromResource(FindingAid.class).path(doc.getId()).build()).build();
     }
 
     @GET
@@ -195,6 +184,7 @@ public class FindingAid {
         } else {
             element.assign(nodeType);
         }
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -208,6 +198,7 @@ public class FindingAid {
             fragment.setType(fragmentType);
         }
         fragment.setText(readContent(value));
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -217,6 +208,7 @@ public class FindingAid {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.getRootElement().findById(partId);
         element.assignTable(rowType, colTypes);
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -271,6 +263,7 @@ public class FindingAid {
             }
         }
         element.replaceTableData(table);
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_XML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -281,6 +274,7 @@ public class FindingAid {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.getRootElement().findById(partId);
         element.bumpContent(element.getType().getProfile().getNodeType(type));
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -291,6 +285,7 @@ public class FindingAid {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.getRootElement().findById(partId);
         element.addChild(index);
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
@@ -302,6 +297,7 @@ public class FindingAid {
         final Element element = doc.getRootElement().findById(partId);
         final Element parent = element.getParent();
         parent.removeChild(element);
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(parent.printTreeXHTML().toString()).build();
     }
 
@@ -318,6 +314,7 @@ public class FindingAid {
         final Element element = doc.getRootElement().findById(partId);
         final Element newParent = doc.getRootElement().findById(newParentId);
         element.moveElement(newParent, index);
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(newParent.printTreeXHTML().toString()).build();
     }
 
