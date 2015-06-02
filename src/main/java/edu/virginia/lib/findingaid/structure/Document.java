@@ -106,7 +106,9 @@ public class Document {
         while (r.hasNext()) {
             final XMLEvent next = r.nextEvent();
             if (next.isCharacters()) {
-                sb.append(next.asCharacters().getData());
+                if (next.asCharacters().getData() != null) {
+                    sb.append(next.asCharacters().getData());
+                }
             } else if (next.isEndElement()) {
                 return sb.toString();
             }

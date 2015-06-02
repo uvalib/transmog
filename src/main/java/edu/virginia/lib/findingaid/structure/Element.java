@@ -337,7 +337,11 @@ public class Element implements Serializable {
         }
 
         for (Fragment f : fragments) {
-            response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">" + f.getText() + "</span>");
+            if (fragments.size() == 1 && "".equals(f.getText())) {
+                response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">[click to add text]</span>");
+            } else {
+                response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">" + f.getText() + "</span>");
+            }
         }
 
         if (children != null) {
