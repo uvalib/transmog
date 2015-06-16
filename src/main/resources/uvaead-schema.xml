@@ -489,6 +489,7 @@
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>UNITTITLE</canHaveChild>
+      <canHaveChild>SCOPECONTENT</canHaveChild>
       <canHaveChild>UNITDATE</canHaveChild>
       <canHaveChild>BOX</canHaveChild>
       <canHaveChild>BOXFOLDER</canHaveChild>
