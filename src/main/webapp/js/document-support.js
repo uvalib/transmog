@@ -46,6 +46,8 @@ function loadDocumentById(docid) {
                             type: "POST",
                             url: "undo",
                             data: "",
+                            beforeSend: block($('.ROOT')),
+                            complete: release,
                             success: replaceDocumentElement,
                             error: function() { alert("No more actions in undo history."); }
                         });
@@ -58,6 +60,8 @@ function loadDocumentById(docid) {
                         $.ajax({
                             type: "POST",
                             url: "apply-rules",
+                            beforeSend: block($('.ROOT')),
+                            complete: release,
                             data: "",
                             success: replaceDocumentElement
                         });
@@ -70,6 +74,15 @@ function loadDocumentById(docid) {
                 }});
 
         }});
+}
+
+
+function block(element) {
+    $('<div class="ui-widget-overlay ui-front" id="blank-it-out" style="z-index: 100;"></div>').appendTo(element);
+}
+
+function release() {
+    $('#blank-it-out').remove();
 }
 
 function markUpDiv(jquery) {
@@ -194,6 +207,8 @@ function dropComponent(event, ui) {
     $.ajax({
         type: "MOVE",
         url: partId + "?newParent=" + newParentId + "&index=" + index,
+        beforeSend: block($('.ROOT')),
+        complete: release,
         success: function(htmlFragment) {
             ui.draggable.remove();
             replaceDocumentElement(htmlFragment);
@@ -214,7 +229,9 @@ function addToolbarForAssigned(div) {
                 type: "PUT",
                 url: partId + "?type=" + type,
                 data: "",
-                success: replaceDocumentElement
+                success: replaceDocumentElement,
+                beforeSend: block($('.ROOT')),
+                complete: release
             });
             return;
         });
@@ -229,7 +246,9 @@ function addToolbarForAssigned(div) {
             type: "POST",
             url: partId + "/new?index=" + index,
             data: "",
-            success: replaceDocumentElement
+            success: replaceDocumentElement,
+            beforeSend: block($('.ROOT')),
+            complete: release
         });
         return;
 
@@ -262,7 +281,9 @@ function addToolbarForUnassigned(div) {
             type: "DELETE",
             url: partId,
             data: "",
-            success: replaceDocumentElement
+            success: replaceDocumentElement,
+            beforeSend: block($('.ROOT')),
+            complete: release
         });
         return;
 
@@ -473,7 +494,9 @@ function assignTable() {
         type: "POST",
         url: partId + "/table?" + query,
         data: "",
-        success: replaceDocumentElement
+        success: replaceDocumentElement,
+        beforeSend: block($('.ROOT')),
+        complete: release
     });
     return;
 }
@@ -491,7 +514,9 @@ function assignType() {
     $.ajax({
         type: canContainText ? "PUT" : "POST",
         url: partId + "?type=" + selectedType,
-        success: replaceDocumentElement
+        success: replaceDocumentElement,
+        beforeSend: block($('.ROOT')),
+        complete: release
     });
     return;
 }
