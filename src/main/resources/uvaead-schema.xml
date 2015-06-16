@@ -270,14 +270,14 @@
     </nodeType>
     <nodeType>
       <id>ARCHIVIST</id>
-      <label>Archivist</label>
+      <label>Archivist (not yet mapped to EAD)</label>
       <description></description>
       <isTextNode>true</isTextNode>
       <canHaveChild>TEXT</canHaveChild>
     </nodeType>
     <nodeType>
       <id>DSC_HEAD</id>
-      <label>Heading for Subordinate Components</label>
+      <label>Heading for Subordinate Components (not yet mapped to EAD)</label>
       <description></description>
       <isTextNode>true</isTextNode>
       <canHaveChild>TEXT</canHaveChild>
@@ -327,7 +327,7 @@
     </nodeType>
     <nodeType>
       <id>CUSTODHIST</id>
-      <label>Custodial History</label>
+      <label>Custodial History (not yet mapped to EAD)</label>
       <description />
       <isTextNode>false</isTextNode>
       <canHaveChild>HEAD</canHaveChild>
@@ -335,7 +335,7 @@
     </nodeType>
     <nodeType>
       <id>LANGMATERIAL</id>
-      <label>Languages and Scripts of the Material</label>
+      <label>Languages and Scripts of the Material (not yet mapped to EAD)</label>
       <description />
       <isTextNode>true</isTextNode>
     </nodeType>
@@ -374,7 +374,7 @@
     </nodeType>
     <nodeType>
       <id>APPRAISAL</id>
-      <label>Appraisal, Destruction, and Scheduling Information</label>
+      <label>Appraisal, Destruction, and Scheduling Information (not yet mapped to EAD)</label>
       <description />
       <isTextNode>false</isTextNode>
       <canHaveChild>PARAGRAPH</canHaveChild>

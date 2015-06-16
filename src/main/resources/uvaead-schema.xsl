@@ -54,6 +54,33 @@
       <xsl:apply-templates select="*" mode="C01" />
     </c01>
   </xsl:template>
+  
+  <xsl:template match="ITEM" mode="DSC">
+    <c01 level="item">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+      </did>
+      <xsl:apply-templates select="*" mode="C01" />
+    </c01>
+  </xsl:template>
+  
+  <xsl:template match="SUBSERIES" mode="C01">
+    <c02 level="subseries">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+      </did>
+      <xsl:apply-templates select="*" mode="C02" />
+    </c02>
+  </xsl:template>
+  
+  <xsl:template match="ITEM" mode="C01">
+    <c02 level="item">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+      </did>
+      <xsl:apply-templates select="*" mode="C02" />
+    </c02>
+  </xsl:template>
 
   <xsl:template match="UNITTITLE" mode="DID">
     <unittitle><xsl:apply-templates /></unittitle>
@@ -62,29 +89,23 @@
   <xsl:template match="EXTENT" mode="DID">
     <physdesc><extent><xsl:apply-templates /></extent></physdesc>
   </xsl:template>
-
-  <xsl:template match="ITEM" mode="DSC">
-    <c01 level="item">
-      <xsl:apply-templates select="*" mode="C01" />
-    </c01>
-  </xsl:template>
-
-  <xsl:template match="SUBSERIES" mode="C01">
-    <c02 level="subseries">
-      <xsl:apply-templates select="*" mode="C02" />
-    </c02>
-  </xsl:template>
-
-  <xsl:template match="ITEM" mode="C01">
-    <c02 level="item">
-      <xsl:apply-templates select="*" mode="C02" />
-    </c02>
-  </xsl:template>
-
-  <xsl:template match="SCOPECONTENT" mode="ARCHDESC C02 C01 C03">
+  
+  <xsl:template match="SCOPECONTENT" mode="ARCHDESC DID">
     <scopecontent>
       <xsl:apply-templates select="*" mode="SCOPECONTENT" />
     </scopecontent>
+  </xsl:template>
+  
+  <xsl:template match="BOX" mode="DID">
+    <container label="Box" type="box"><xsl:apply-templates select="*" mode="BOX" /></container>
+  </xsl:template>
+  
+  <xsl:template match="BOX_FOLDER" mode="DID">
+    <container label="Box-folder" type="box-folder"><xsl:apply-templates select="*" mode="BOX_FOLDER" /></container>
+  </xsl:template>
+  
+  <xsl:template match="FOLDER" mode="DID">
+    <container label="Folder" type="folder"><xsl:apply-templates select="*" mode="FOLDER" /></container>
   </xsl:template>
 
   <xsl:template match="BIOGHIST" mode="ARCHDESC">
@@ -98,8 +119,6 @@
       <xsl:apply-templates select="*" mode="ARRANGEMENT" />
     </arrangment>
   </xsl:template>
-
-
 
   <xsl:template match="ACCESSRESTRICT" mode="ADMININFO">
     <accessrestrict>
@@ -126,17 +145,17 @@
   </xsl:template>
 
   <xsl:template match="HEAD" mode="#all">
-    <head><xsl:apply-templates /></head>
+    <head><xsl:apply-templates select="*" /></head>
   </xsl:template>
 
   <xsl:template match="PARAGRAPH" mode="#all">
-    <p><xsl:apply-templates /></p>
+    <p><xsl:apply-templates  select="*" /></p>
   </xsl:template>
 
 
   <xsl:template match="TITLEPROPER" mode="TITLEPAGE TITLEPROPER">
     <titleproper>
-      <xsl:apply-templates mode="TITLEPROPER" />
+      <xsl:apply-templates mode="TITLEPROPER" select="*" />
     </titleproper>
   </xsl:template>
 
@@ -155,6 +174,10 @@
 
   <xsl:template match="DATE" mode="TITLEPROPER">
     <date><xsl:apply-templates /></date>
+  </xsl:template>
+  
+  <xsl:template match="UNITDATE" mode="DID UNITTITLE">
+    <unitdate><xsl:apply-templates select="*"/></unitdate>
   </xsl:template>
 
   <xsl:template match="TEXT" mode="#all">
