@@ -136,7 +136,20 @@ function addDropZones(div) {
         $(this).droppable({
             greedy: true,
             hoverClass: "drop-hover",
-            accept: ".UNASSIGNED, .ASSIGNED, .UNASSIGNED_TABLE",
+            accept: function(dropped) {
+                var type = getPartType(dropped);
+                var parentType = getPartType($(this).parent());
+                console.log('type=' + type + ", parentType=" + parentType);
+                if (type == "UNASSIGNED" || type == "UNASSIGNED_TABLE") {
+                    return true;
+                }
+                for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
+                    if (type == profile[parentType]["possibleChildren"][i]) {
+                        return true;
+                    }
+                }
+                return false;
+                },
             drop: dropComponent
         });
 
@@ -203,6 +216,11 @@ function addToolbarForAssigned(div) {
 
     });
     addDropZones(div);
+
+    div.draggable( {
+        cursor: 'move',
+        revert: "invalid"
+    } );
 }
 
 function addToolbarForUnassigned(div) {

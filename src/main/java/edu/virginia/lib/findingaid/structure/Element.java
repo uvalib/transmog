@@ -274,7 +274,10 @@ public class Element implements Serializable {
 
     public void moveElement(final Element newParent, int index) {
         if (!isUnassigned() && !isUnassignedTable()) {
-            throw new IllegalStateException();
+            if (!newParent.getType().canHaveChild(type)) {
+                throw new IllegalStateException("You may not place a \"" + type.getDisplayLabel() 
+                        + "\" within a \"" + newParent.getType().getDisplayLabel() + "\"!");
+            }
         }
         final Element oldParent = this.parent;
         if (oldParent == newParent && index > oldParent.children.indexOf(this)) {
