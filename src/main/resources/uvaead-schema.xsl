@@ -184,8 +184,12 @@
     <xsl:apply-templates select="*" />
   </xsl:template>
 
-  <xsl:template match="span" mode="#all">
+  <xsl:template match="span[@style='']" mode="#all">
     <xsl:value-of select="text()" />
+  </xsl:template>
+  
+  <xsl:template match="span[@style and not(@style='')]" mode="#all">
+    <emph><xsl:attribute name="render" select="@style"/><xsl:value-of select="text()" /></emph>
   </xsl:template>
 
 </xsl:stylesheet>
