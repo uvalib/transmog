@@ -192,15 +192,17 @@ public class Element implements Serializable {
                 throw new IllegalArgumentException("Type " + type + " not found in profile!");
             }
         }
-        this.type = getProfile().getNodeType(rowTypeString);
+        int insertionPoint = getIndexWithinParent();
         for (int i = 0; i < this.children.size(); i ++) {
             Element row = this.children.get(i);
             row.type = getProfile().getNodeType(rowTypeString);
+            row.moveElement(parent, insertionPoint ++);
             for (int j = 0; j < row.children.size(); j ++) {
                 Element cell = row.children.get(j);
                 cell.type = cell.getProfile().getNodeType(colTypeStrings.get(j));
             }
         }
+        this.removeFromParent();
     }
 
     public List<List<String>> getTableData() {
@@ -275,7 +277,7 @@ public class Element implements Serializable {
     public void moveElement(final Element newParent, int index) {
         if (!isUnassigned() && !isUnassignedTable()) {
             if (!newParent.getType().canHaveChild(type)) {
-                throw new IllegalStateException("You may not place a \"" + type.getDisplayLabel() 
+                throw new IllegalStateException("You may not place a \"" + type.getDisplayLabel()
                         + "\" within a \"" + newParent.getType().getDisplayLabel() + "\"!");
             }
         }

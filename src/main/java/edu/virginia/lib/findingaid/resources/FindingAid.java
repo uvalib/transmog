@@ -207,9 +207,10 @@ public class FindingAid {
     public Response processTable(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("rowType") final String rowType, @QueryParam("colTypes") final List<String> colTypes) {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.getRootElement().findById(partId);
+        final Element parent = element.getParent();
         element.assignTable(rowType, colTypes);
         DocumentStore.getDocumentStore().saveDocument(doc);
-        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(parent.printTreeXHTML().toString()).build();
     }
 
     @POST
