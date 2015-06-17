@@ -32,6 +32,9 @@
       <archdesc level="collection">
         <did>
           <unittitle label="Title"><xsl:apply-templates mode="TITLEPROPER" select="TITLEPROPER/*" /></unittitle>
+          <xsl:call-template name="physdesc">
+            <xsl:with-param name="parent" select="current()" />
+          </xsl:call-template>
         </did>
         <descgrp type="admininfo">
           <xsl:apply-templates select="*" mode="ADMININFO" />
@@ -59,6 +62,9 @@
     <c01 level="item">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
       </did>
       <xsl:apply-templates select="*" mode="C01" />
     </c01>
@@ -68,6 +74,9 @@
     <c02 level="subseries">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
       </did>
       <xsl:apply-templates select="*" mode="C02" />
     </c02>
@@ -77,18 +86,36 @@
     <c02 level="item">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
       </did>
       <xsl:apply-templates select="*" mode="C02" />
     </c02>
+  </xsl:template>
+
+  <xsl:template name="physdesc">
+    <xsl:param name="parent" required="yes" />
+    <xsl:variable name="content"><xsl:apply-templates select="current()/*" mode="PHYSDESC"/></xsl:variable>
+    <xsl:if test="$content != ''">
+      <physdesc>
+        <xsl:copy-of select="$content" />
+      </physdesc>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="UNITTITLE" mode="DID">
     <unittitle><xsl:apply-templates /></unittitle>
   </xsl:template>
 
-  <xsl:template match="EXTENT" mode="DID">
-    <physdesc><extent><xsl:apply-templates /></extent></physdesc>
+  <xsl:template match="EXTENT" mode="PHYSDESC">
+    <extent><xsl:apply-templates select="*"/></extent>
   </xsl:template>
+  <xsl:template match="PHYSFACET" mode="PHYSDESC">
+    <physfacet><xsl:apply-templates select="*"/></physfacet>
+  </xsl:template>
+  
+  
   
   <xsl:template match="SCOPECONTENT" mode="ARCHDESC C01 C02 C03">
     <scopecontent>

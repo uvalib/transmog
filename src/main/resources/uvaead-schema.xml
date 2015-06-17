@@ -257,6 +257,8 @@
       <canHaveChild>ACQINFO</canHaveChild>
       <canHaveChild>SCOPECONTENT</canHaveChild>
       <canHaveChild>ARRANGEMENT</canHaveChild>
+      <canHaveChild>EXTENT</canHaveChild>
+      <canHaveChild>PHYSFACET</canHaveChild>
       <canHaveChild>SERIES</canHaveChild>
       <canHaveChild>ITEM</canHaveChild>
     </nodeType>
@@ -466,6 +468,7 @@
       <canHaveChild>BOXFOLDER</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
+      <canHaveChild>PHYSFACET</canHaveChild>
     </nodeType>
     <nodeType>
       <id>SUBSERIES</id>
@@ -482,6 +485,7 @@
       <canHaveChild>BOXFOLDER</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
+      <canHaveChild>PHYSFACET</canHaveChild>
     </nodeType>
     <nodeType>
       <id>ITEM</id>
@@ -495,10 +499,18 @@
       <canHaveChild>BOXFOLDER</canHaveChild>
       <canHaveChild>FOLDER</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
+      <canHaveChild>PHYSFACET</canHaveChild>
     </nodeType>
     <nodeType>
       <id>EXTENT</id>
-      <label>Extent</label>
+      <label>Physical Description / Extent</label>
+      <description/>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>PHYSFACET</id>
+      <label>Physical Description / Facet</label>
       <description/>
       <isTextNode>true</isTextNode>
       <canHaveChild>TEXT</canHaveChild>
