@@ -70,6 +70,18 @@
     </c01>
   </xsl:template>
   
+  <xsl:template match="FILE" mode="DSC">
+    <c01 level="file">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
+      </did>
+      <xsl:apply-templates select="*" mode="C01" />
+    </c01>
+  </xsl:template>
+  
   <xsl:template match="SUBSERIES" mode="C01">
     <c02 level="subseries">
       <did>
@@ -84,6 +96,18 @@
   
   <xsl:template match="ITEM" mode="C01">
     <c02 level="item">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
+      </did>
+      <xsl:apply-templates select="*" mode="C02" />
+    </c02>
+  </xsl:template>
+  
+  <xsl:template match="FILE" mode="C01">
+    <c02 level="file">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
         <xsl:call-template name="physdesc">

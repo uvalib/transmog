@@ -262,6 +262,7 @@
       <canHaveChild>PHYSTECH</canHaveChild>
       <canHaveChild>SERIES</canHaveChild>
       <canHaveChild>ITEM</canHaveChild>
+      <canHaveChild>FILE</canHaveChild>
     </nodeType>
     <nodeType>
       <id>TITLEPROPER</id>
@@ -471,6 +472,7 @@
       <canHaveChild>SCOPECONTENT</canHaveChild>
       <canHaveChild>SUBSERIES</canHaveChild>
       <canHaveChild>ITEM</canHaveChild>
+      <canHaveChild>FILE</canHaveChild>
       <canHaveChild>UNITTITLE</canHaveChild>
       <canHaveChild>UNITDATE</canHaveChild>
       <canHaveChild>BOX</canHaveChild>
@@ -489,6 +491,7 @@
       <canHaveChild>SCOPECONTENT</canHaveChild>
       <canHaveChild>SUBSERIES</canHaveChild>
       <canHaveChild>ITEM</canHaveChild>
+      <canHaveChild>FILE</canHaveChild>
       <canHaveChild>UNITTITLE</canHaveChild>
       <canHaveChild>UNITDATE</canHaveChild>
       <canHaveChild>BOX</canHaveChild>
@@ -501,6 +504,21 @@
     <nodeType>
       <id>ITEM</id>
       <label>Item</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>UNITTITLE</canHaveChild>
+      <canHaveChild>SCOPECONTENT</canHaveChild>
+      <canHaveChild>UNITDATE</canHaveChild>
+      <canHaveChild>BOX</canHaveChild>
+      <canHaveChild>BOXFOLDER</canHaveChild>
+      <canHaveChild>FOLDER</canHaveChild>
+      <canHaveChild>EXTENT</canHaveChild>
+      <canHaveChild>PHYSFACET</canHaveChild>
+      <canHaveChild>PHYSTECH</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>FILE</id>
+      <label>File</label>
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>UNITTITLE</canHaveChild>
