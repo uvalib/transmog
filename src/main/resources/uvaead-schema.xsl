@@ -140,6 +140,12 @@
       <xsl:apply-templates select="*" mode="BIOGHIST" />
     </bioghist>
   </xsl:template>
+  
+  <xsl:template match="PHYSTECH" mode="ARCHDESC C01 C02 C03">
+    <phystech>
+      <xsl:apply-templates select="*" mode="PHYSTECH" />
+    </phystech>
+  </xsl:template>
 
   <xsl:template match="ARRANGMENT" mode="ARCHDESC">
     <arrangment>

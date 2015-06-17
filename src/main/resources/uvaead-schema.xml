@@ -259,6 +259,7 @@
       <canHaveChild>ARRANGEMENT</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
       <canHaveChild>PHYSFACET</canHaveChild>
+      <canHaveChild>PHYSTECH</canHaveChild>
       <canHaveChild>SERIES</canHaveChild>
       <canHaveChild>ITEM</canHaveChild>
     </nodeType>
@@ -399,6 +400,14 @@
       <canHaveChild>HEAD</canHaveChild>
     </nodeType>
     <nodeType>
+      <id>PHYSTECH</id>
+      <label>Physical Characteristics and Technical Requirements</label>
+      <description/>
+      <isTextNode>false</isTextNode>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+    </nodeType>
+    <nodeType>
       <id>SERIES</id>
       <label>Series</label>
       <description/>
@@ -469,6 +478,7 @@
       <canHaveChild>FOLDER</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
       <canHaveChild>PHYSFACET</canHaveChild>
+      <canHaveChild>PHYSTECH</canHaveChild>
     </nodeType>
     <nodeType>
       <id>SUBSERIES</id>
@@ -486,6 +496,7 @@
       <canHaveChild>FOLDER</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
       <canHaveChild>PHYSFACET</canHaveChild>
+      <canHaveChild>PHYSTECH</canHaveChild>
     </nodeType>
     <nodeType>
       <id>ITEM</id>
@@ -500,6 +511,7 @@
       <canHaveChild>FOLDER</canHaveChild>
       <canHaveChild>EXTENT</canHaveChild>
       <canHaveChild>PHYSFACET</canHaveChild>
+      <canHaveChild>PHYSTECH</canHaveChild>
     </nodeType>
     <nodeType>
       <id>EXTENT</id>
