@@ -94,8 +94,8 @@ function addTextEditLinks() {
         $('#dialog').dialog({
             autoOpen: true,
             modal: true,
-            height: 300,
-            width: 350,
+            height: 400,
+            width: 450,
             buttons: {
                 "Save Changes": function() {
                     var newValue = $('#text_content').val();
@@ -214,7 +214,8 @@ function addToolbarForUnassigned(div) {
             toolbar += '<option value="' + profile[parentType]["possibleChildren"][i] + '">' + getLabel(profile[parentType]["possibleChildren"][i]) + '</option>';
         }
     }
-    toolbar += '</select> <a href="javascript:noop()" class="delete">(delete)</a></div>';
+    toolbar += '</select> <a href="javascript:noop()" class="delete">(delete)</a>'
+             + ' <a href="javascript:noop()" class="split">(split text)</a></div>';
     div.prepend($(toolbar));
 
     div.find('>.top-bar>.delete').click(function() {
@@ -230,11 +231,58 @@ function addToolbarForUnassigned(div) {
 
     });
 
+    div.find('>.top-bar>.split').click(function() {
+        var link = $(this);
+        var partId = link.parent().parent().attr('id');
+        var contents = link.parent().parent().find("span a").text();
+        var $dialog = $('<div id="dialog" title="Split Text"><div class="instructions">Select some of the text below, then click "Split selected" to divide this text at that point.</div><div class="selection-area">' + contents + '</div></div>');
+        $dialog.insertAfter(link);
+        $('#dialog').dialog({
+            autoOpen: true,
+            modal: true,
+            height: 400,
+            width: 450,
+            buttons: {
+                "Split selected": function() {
+                    var selected = getSelectionText();
+                    if (contents.contains(selected)) {
+                        $.ajax({
+                            type: "POST",
+                            url: partId + '/split?text=' + selected,
+                            data: "none",
+                            success: replaceDocumentElement
+                        });
+                        $dialog.dialog("close");
+                    } else {
+                        alert('Selected text "' + selected + '" was not part of the original text!');
+                    }
+                },
+                Cancel: function() {
+                    $dialog.dialog("close");
+                }
+            },
+            close: function() {
+                $dialog.remove();
+            }
+        });
+
+    });
+
     div.draggable( {
         cursor: 'move',
         revert: "invalid"
     } );
 
+}
+
+function getSelectionText() {
+    var text = "";
+    if (window.getSelection) {
+        text = window.getSelection().toString();
+    } else if (document.selection && document.selection.type != "Control") {
+        text = document.selection.createRange().text;
+    }
+    return text;
 }
 
 function addToolbarForTable(div) {

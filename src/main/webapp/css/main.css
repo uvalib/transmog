@@ -166,5 +166,12 @@ h1 {
     margin-right: 5px;
 }
 
+.selection-area {
+    padding: .5em;
+}
+
+.instructions {
+    font-style: italic;
+}
 
 

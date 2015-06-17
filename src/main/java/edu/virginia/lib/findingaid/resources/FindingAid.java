@@ -301,6 +301,17 @@ public class FindingAid {
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
     }
 
+    @POST
+    @Produces(MediaType.TEXT_XML)
+    @Path("/{id: [^/]*}/{partId: [^/]*}/split")
+    public Response splitText(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("text") final String text) throws IOException {
+        final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final Element element = doc.getRootElement().findById(partId);
+        element.splitOnText(text);
+        DocumentStore.getDocumentStore().saveDocument(doc);
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.getParent().printTreeXHTML().toString()).build();
+    }
+
     @DELETE
     @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}/{partId: [^/]*}")

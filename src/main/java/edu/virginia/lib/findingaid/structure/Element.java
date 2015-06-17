@@ -1,5 +1,6 @@
 package edu.virginia.lib.findingaid.structure;
 
+import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -43,6 +44,62 @@ public class Element implements Serializable {
             throw new IllegalArgumentException("Elements of type " + type.getId() + " may not contain text directly!");
         }
         this.fragments = new ArrayList<Fragment>(f);
+    }
+
+    /**
+     * Splits this element into multiple elements (of the same type) on the first
+     * instance of the given text String in the content of this element.
+     */
+    public void splitOnText(String text) {
+        final String contentAsString = getContentAsString();
+        if (!contentAsString.contains(text)) {
+            return;
+        }
+        final Element before = new Element(getType());
+        final Element after = new Element(getType());
+        final int start = contentAsString.indexOf(text);
+        final int end = start + text.length();
+        int cursor = 0;
+        final List<Fragment> fragmentQueue = new ArrayList<Fragment>(fragments);
+        for (int i = 0; i < fragmentQueue.size(); i ++) {
+            Fragment f = fragmentQueue.get(i);
+            final int flength = f.getText().length();
+            if (cursor < start) {
+                if (cursor + flength <= start) {
+                    // whole fragment is before
+                    before.addFragment(f);
+                    fragments.remove(f);
+                    cursor += flength;
+                } else {
+                    // fragment must be split
+                    final Fragment newFrag = new Fragment(f.getText().substring(0, start - cursor), f.styles);
+                    before.addFragment(newFrag);
+                    f.setText(f.getText().substring(start - cursor));
+                    i --; // look at this fragment again...
+                    cursor += newFrag.getText().length();
+                }
+            } else if (cursor >= end) {
+                // whole fragment is after
+                after.addFragment(f);
+                fragments.remove(f);
+                cursor += flength;
+            } else if (cursor + flength <= end) {
+                // whole fragment is within
+                cursor += flength;
+            } else {
+                // fragment must be split
+                after.addFragment(new Fragment(f.getText().substring(end - cursor), f.styles));
+                f.setText(f.getText().substring(0, end - cursor));
+                cursor += flength;
+            }
+        }
+        if (before.getContentAsString().length() > 0) {
+            parent.addChild(before, this.getIndexWithinParent());
+        }
+        if (after.getContentAsString().length() > 0) {
+            parent.addChild(after, this.getIndexWithinParent() + 1);
+        }
+
     }
 
     public Profile getProfile() {
