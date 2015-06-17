@@ -90,7 +90,7 @@
     <physdesc><extent><xsl:apply-templates /></extent></physdesc>
   </xsl:template>
   
-  <xsl:template match="SCOPECONTENT" mode="ARCHDESC DID">
+  <xsl:template match="SCOPECONTENT" mode="ARCHDESC C01 C02 C03">
     <scopecontent>
       <xsl:apply-templates select="*" mode="SCOPECONTENT" />
     </scopecontent>
