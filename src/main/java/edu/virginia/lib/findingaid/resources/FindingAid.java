@@ -94,7 +94,9 @@ public class FindingAid {
     public Response addDocument(@PathParam("id") final String findingAidId, @QueryParam("profileId") final String profileName, InputStream documentStream) throws IOException {
         final Document doc = new DocumentConverter().convertWordDoc(documentStream, getRequestedProfileOrDefault(profileName), findingAidId);
         DocumentStore.getDocumentStore().addDocument(doc);
-        System.out.println("Added document... " + doc.getId());
+        DocumentConverter.annotateTables(doc);
+        DocumentConverter.applyRules(doc);
+        DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.status(Response.Status.OK).contentLocation(UriBuilder.fromResource(FindingAid.class).path(doc.getId()).build()).build();
     }
 
@@ -313,6 +315,16 @@ public class FindingAid {
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.getParent().printTreeXHTML().toString()).build();
     }
 
+    @POST
+    @Produces(MediaType.TEXT_XML)
+    @Path("/{id: [^/]*}/apply-rules")
+    public Response applyRules(@PathParam("id") final String findingAidId) throws IOException {
+        final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final int count = DocumentConverter.applyRules(doc);
+        DocumentStore.getDocumentStore().saveDocument(doc);
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(doc.getRootElement().printTreeXHTML(getMessage(count)).toString()).build();
+    }
+
     @DELETE
     @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}/{partId: [^/]*}")
@@ -361,6 +373,14 @@ public class FindingAid {
             return s;
         }
 
+    }
+
+    private String getMessage(int count) {
+        if (count == 0) {
+            return "No new sections could be automatically assigned..";
+        } else {
+            return count + " section" + (count > 1 ? "s were" : " was") + " automatically assigned.";
+        }
     }
 
 }

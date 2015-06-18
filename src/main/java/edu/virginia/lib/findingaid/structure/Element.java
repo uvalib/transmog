@@ -374,6 +374,10 @@ public class Element implements Serializable {
     }
 
     public String printTreeXHTML() {
+        return printTreeXHTML(null);
+    }
+
+    public String printTreeXHTML(final String message) {
         final NodeType table = getProfile().getTableType();
         final NodeType row = getProfile().getRowType();
         final boolean isTable = type.equals(table);
@@ -396,6 +400,11 @@ public class Element implements Serializable {
 
         if (getProfile().getRootNodeType().equals(type)) {
             response.append("<div class=\"document-note\">Encoded using the <span id=\"profile-name\">" + getProfile().getProfileName() + "</span></div>");
+            if (message != null) {
+                response.append("<div class=\"alert alert-info alert-dismissible\" role=\"alert\">\n" +
+                        "  <button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-label=\"Close\"><span aria-hidden=\"true\">&times;</span></button>\n" +
+                        message + "</div>");
+            }
         }
 
         for (Fragment f : fragments) {

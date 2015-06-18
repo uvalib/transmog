@@ -41,10 +41,6 @@ public class DocumentConverter {
     public Document convertWordDoc(File doc, Profile s, String filename) throws IOException {
         final Element root = p.processDocument(doc, s);
 
-        annotateTables(root);
-
-        applyRules(root, s);
-
         return new Document(root, filename);
     }
 
@@ -52,7 +48,8 @@ public class DocumentConverter {
      * Identifies tab-separated values and guesses at table structure, adding annotations
      * to the elements.
      */
-    private void annotateTables(Element el) {
+    public static void annotateTables(Document doc) {
+        Element el = doc.getRootElement();
         TableBuilder b = new TableBuilder();
         for (Element child : new ArrayList<>(el.getChildren())) {
             b.addRow(child);
@@ -60,12 +57,21 @@ public class DocumentConverter {
         b.finish();
     }
 
-    private void applyRules(Element el, Profile s) {
-        for (Rule r : s.getRules()) {
+    /**
+     * Applies the current set of rules from the document's profile to any root level
+     * unassigned Elements.
+     */
+    public static int applyRules(Document doc) {
+        int blocksMatched = 0;
+        final Element el = doc.getRootElement();
+        final Profile p = doc.getProfile();
+        for (Rule r : p.getRules()) {
             for (BlockMatch b : r.getWhenClause().findMatches(el)) {
+                blocksMatched ++;
                 r.getAction().apply(b);
             }
         }
+        return blocksMatched;
     }
 
     private static class TableBuilder {

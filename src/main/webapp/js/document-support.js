@@ -51,6 +51,18 @@ function loadDocumentById(docid) {
                         });
                     });
 
+                    // add apply rules button
+                    $('<button type="button" class="btn btn-default" aria-label="Left Align" id="analyze">Analyze Doc</button>').appendTo($('#floating-menu'));
+                    $('#analyze').unbind();
+                    $('#analyze').click(function() {
+                        $.ajax({
+                            type: "POST",
+                            url: "apply-rules",
+                            data: "",
+                            success: replaceDocumentElement
+                        });
+                    });
+
 
                     // make it visible
                     $('#loading_document').hide();
