@@ -64,7 +64,11 @@ function markUpDiv(jquery) {
     // format the HTML and add labels and functions
     jquery.each(function() {
         var div = $(this);
-        div.find(">span").each(addTextEditLinks);
+        var $spans = div.find(">span");
+        if ($spans.length == 1 && $spans.text() == '') {
+            $spans.first().append("[click to add text]");
+        }
+        $spans.each(addTextEditLinks);
 
         if (div.hasClass('UNASSIGNED')) {
             addToolbarForUnassigned(div);
@@ -86,6 +90,9 @@ function addTextEditLinks() {
     span.find("a").click(function() {
         var link = $(this);
         var contents = link.text();
+        if (contents == "[click to add text]") {
+            contents = "";
+        }
         var partId = link.parent().parent().attr("id");
         var fragmentId = link.parent().attr("id");
         var type = link.parent().attr("class");

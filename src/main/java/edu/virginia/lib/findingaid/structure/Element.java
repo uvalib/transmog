@@ -399,11 +399,7 @@ public class Element implements Serializable {
         }
 
         for (Fragment f : fragments) {
-            if (fragments.size() == 1 && "".equals(f.getText())) {
-                response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">[click to add text]</span>");
-            } else {
-                response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">" + f.getText() + "</span>");
-            }
+            response.append("<span id=\"" + f.getId() + "\" class=\"" + f.getStylesAsSpaceDelimitedString() + "\">" + (f.getText() == null ? "" : f.getText()) + "</span>");
         }
 
         if (children != null) {
