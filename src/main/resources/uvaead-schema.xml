@@ -7,6 +7,77 @@
   <rootNodeTypeId>DOCUMENT</rootNodeTypeId>
 
   <rules>
+    <!-- HOLMES and BRANDT FINDING AID RULES -->
+    <rule>
+      <description>This is the pattern for the Files in the Holmes Finding aid.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="extent">(\d+ items?\s*)|(\d+ pages?\s*)</elementmatch>
+          <elementmatch type="pattern" id="abstract">.{70,}</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="FILE">
+          <assign matchedId="firstline" capturingGroup="8" path="UNITTITLE" />
+          <assign matchedId="firstline" capturingGroup="1" path="UNITDATE" />
+          <assign matchedId="firstline" capturingGroup="10" path="FOLDER" />
+          <assign matchedId="extent" path="EXTENT" />
+          <assign matchedId="abstract" path="SCOPECONTENT/PARAGRAPH" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Header line, and extent.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="extent">(\d+ items?\s*)|(\d+ pages?\s*)</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="FILE">
+          <assign matchedId="firstline" capturingGroup="8" path="UNITTITLE" />
+          <assign matchedId="firstline" capturingGroup="1" path="UNITDATE" />
+          <assign matchedId="firstline" capturingGroup="10" path="FOLDER" />
+          <assign matchedId="extent" path="EXTENT" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Header line, abstract.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="abstract">.{70,}</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="FILE">
+          <assign matchedId="firstline" capturingGroup="8" path="UNITTITLE" />
+          <assign matchedId="firstline" capturingGroup="1" path="UNITDATE" />
+          <assign matchedId="firstline" capturingGroup="10" path="FOLDER" />
+          <assign matchedId="abstract" path="SCOPECONTENT/PARAGRAPH" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Header line only</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="FILE">
+          <assign matchedId="firstline" capturingGroup="8" path="UNITTITLE" />
+          <assign matchedId="firstline" capturingGroup="1" path="UNITDATE" />
+          <assign matchedId="firstline" capturingGroup="10" path="FOLDER" />
+        </assignblock>
+      </action>
+    </rule>
+    <!-- END OF HOLMES FINDING AID RULES -->
+    
     <rule>
       <description>When the first paragraph starts with "Letters of" or "Papers of", consider it the title.</description>
       <match>
@@ -150,7 +221,7 @@
       <description>Acquisition Information</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Acquisition Information\s*</elementmatch>
+          <elementmatch type="pattern" id="head">(Acquisition Information\s*)|(Acquisition\s*)</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
@@ -165,22 +236,7 @@
       <description>Access and Use restrictions</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Access and Use Restrictions\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
-        </block>
-      </match>
-      <action>
-        <assignblock path="ACCESSRESTRICT">
-          <omit matchedId="head" />
-          <assign matchedId="paragraph" path="PARAGRAPH"/>
-        </assignblock>
-      </action>
-    </rule>
-    <rule>
-      <description>Access restrictions</description>
-      <match>
-        <block>
-          <elementmatch type="pattern" id="head">Access Restrictions\s*</elementmatch>
+          <elementmatch type="pattern" id="head">(Access and Use Restrictions\s*)|(Access\s*)|(Access Restrictions\s*)</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
@@ -195,7 +251,7 @@
       <description>Use restrictions</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Use Restrictions\s*</elementmatch>
+          <elementmatch type="pattern" id="head">(Use Restrictions\s*)|(Use\s*)</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
@@ -210,7 +266,7 @@
       <description>Biographical Information</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">(Biographical Information\s*)|(Biographical/Historical Information\s)</elementmatch>
+          <elementmatch type="pattern" id="head">(Biographical Information\s*)|(Biographical/Historical Information\s)|(Biography\s*)</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>

@@ -65,13 +65,13 @@ public class SequentialPatternBlockMatcher implements BlockMatcher {
 
         ElementMatch addsToMatch(Element el) {
             if (required != null && matchesPattern(el, required)) {
-                ElementMatch m = new ElementMatch(el, required.getName());
+                ElementMatch m = new ElementMatch(el, required);
                 advancePatternCursor();
                 return m;
             } else if (required != null && !matchesPattern(el, required)) {
                 return null;
             } else if (optional != null && matchesPattern(el, optional)) {
-                return new ElementMatch(el, optional.getName());
+                return new ElementMatch(el, optional);
             } else {
                 return null;
             }

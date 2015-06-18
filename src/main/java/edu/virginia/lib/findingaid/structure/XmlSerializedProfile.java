@@ -297,13 +297,18 @@ public class XmlSerializedProfile extends Profile {
                 }
             }
 
-            Map<String, String> idToPathMap = new HashMap<String, String>();
+            Map<String, Map<Integer, String>> matchToGroupToPathMap = new HashMap<String, Map<Integer, String>>();
             if (assign != null) {
                 for (XmlSerializedAssign a : assign) {
-                    idToPathMap.put(a.matchedId, a.path);
+                    Map<Integer, String> groupToPathMap = matchToGroupToPathMap.get(a.matchedId);
+                    if (groupToPathMap == null) {
+                        groupToPathMap = new HashMap<Integer, String>();
+                        matchToGroupToPathMap.put(a.matchedId, groupToPathMap);
+                    }
+                    groupToPathMap.put(Integer.parseInt(a.capturingGroup), a.path);
                 }
             }
-            return new AssignmentFragmentAction(path, idToPathMap, omitSet);
+            return new AssignmentFragmentAction(path, matchToGroupToPathMap, omitSet);
 
         }
     }
@@ -357,6 +362,7 @@ public class XmlSerializedProfile extends Profile {
 
         @XmlAttribute private String matchedId;
         @XmlAttribute private String path;
+        @XmlAttribute private String capturingGroup = "0";
     }
 
     private static class XmlSerializedOmit {
