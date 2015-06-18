@@ -148,15 +148,15 @@
   </xsl:template>
   
   <xsl:template match="BOX" mode="DID">
-    <container label="Box" type="box"><xsl:apply-templates select="*" mode="BOX" /></container>
+    <container label="Text" type="box"><xsl:apply-templates select="*" mode="BOX" /></container>
   </xsl:template>
   
   <xsl:template match="BOX_FOLDER" mode="DID">
-    <container label="Box-folder" type="box-folder"><xsl:apply-templates select="*" mode="BOX_FOLDER" /></container>
+    <container label="Text" type="box-folder"><xsl:apply-templates select="*" mode="BOX_FOLDER" /></container>
   </xsl:template>
   
   <xsl:template match="FOLDER" mode="DID">
-    <container label="Folder" type="folder"><xsl:apply-templates select="*" mode="FOLDER" /></container>
+    <container label="Text" type="folder"><xsl:apply-templates select="*" mode="FOLDER" /></container>
   </xsl:template>
 
   <xsl:template match="BIOGHIST" mode="ARCHDESC">
