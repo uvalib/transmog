@@ -12,7 +12,7 @@
       <description>This is the pattern for the Files in the Holmes Finding aid.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d;? ?)+) (\D.*) (Folder: (\d+))\s*</elementmatch>
           <elementmatch type="pattern" id="extent">(\d+ items?\s*)|(\d+ pages?\s*)</elementmatch>
           <elementmatch type="pattern" id="abstract">.{70,}</elementmatch>
         </block>
@@ -31,7 +31,7 @@
       <description>Header line, and extent.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d;? ?)+) (\D.*) (Folder: (\d+))\s*</elementmatch>
           <elementmatch type="pattern" id="extent">(\d+ items?\s*)|(\d+ pages?\s*)</elementmatch>
         </block>
       </match>
@@ -48,7 +48,7 @@
       <description>Header line, abstract.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d;? ?)+) (\D.*) (Folder: (\d+))\s*</elementmatch>
           <elementmatch type="pattern" id="abstract">.{70,}</elementmatch>
         </block>
       </match>
@@ -65,7 +65,7 @@
       <description>Header line only</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d; ?)+) (.*) (Folder: (\d+))\s*</elementmatch>
+          <elementmatch type="pattern" id="firstline">((.*\Qn. d.\E)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d;? ?)+) (\D.*) (Folder: (\d+))\s*</elementmatch>
         </block>
       </match>
       <action>

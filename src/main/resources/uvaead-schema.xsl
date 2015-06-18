@@ -234,7 +234,33 @@
   </xsl:template>
   
   <xsl:template match="UNITDATE" mode="DID UNITTITLE">
-    <unitdate><xsl:apply-templates select="*"/></unitdate>
+    <xsl:variable name="text"><xsl:apply-templates select="*"/></xsl:variable>
+    <xsl:analyze-string select="$text" regex="^([\d]+)[;-].*(\d\d\d\d)$">
+      <xsl:matching-substring>
+        <xsl:variable name="start" select="number(regex-group(1))"/>
+        <xsl:variable name="end" select="number(regex-group(2))"/>
+        <unitdate>
+          <xsl:attribute name="normal" select="concat($start, '/', $end)" />
+          <xsl:attribute name="type">inclusive</xsl:attribute>
+          <xsl:value-of select="$text" />
+        </unitdate>
+      </xsl:matching-substring>
+      <xsl:non-matching-substring>
+        <xsl:analyze-string select="$text" regex="^([\d]+)$">
+          <xsl:matching-substring>
+            <xsl:variable name="point" select="number(regex-group(1))"/>
+            <unitdate>
+              <xsl:attribute name="normal" select="$point" />
+              <xsl:attribute name="type">inclusive</xsl:attribute>
+              <xsl:value-of select="$text" />
+            </unitdate>
+          </xsl:matching-substring>
+          <xsl:non-matching-substring>
+            <unitdate type="inclusive"><xsl:value-of select="$text"></xsl:value-of></unitdate>
+          </xsl:non-matching-substring>
+        </xsl:analyze-string>
+      </xsl:non-matching-substring>
+    </xsl:analyze-string>
   </xsl:template>
 
   <xsl:template match="TEXT" mode="#all">
