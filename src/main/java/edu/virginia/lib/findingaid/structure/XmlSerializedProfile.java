@@ -27,6 +27,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -221,6 +223,17 @@ public class XmlSerializedProfile extends Profile {
                 }
                 result.add(profile.getNodeType(childId));
             }
+            Collections.sort(result, new Comparator<NodeType>() {
+                @Override
+                public int compare(NodeType o1, NodeType o2) {
+                    return o1.getDisplayLabel().compareTo(o2.getDisplayLabel());
+                }
+
+                @Override
+                public boolean equals(Object obj) {
+                    return false;
+                }
+            });
             return result;
         }
 

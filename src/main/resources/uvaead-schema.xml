@@ -521,7 +521,7 @@
     </nodeType>
     <nodeType>
       <id>SERIES</id>
-      <label>Series</label>
+      <label>Component (level=Series)</label>
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>HEAD</canHaveChild>
@@ -540,7 +540,7 @@
     </nodeType>
     <nodeType>
       <id>SUBSERIES</id>
-      <label>Subseries</label>
+      <label>Component (level=Subseries)</label>
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>HEAD</canHaveChild>
@@ -559,7 +559,7 @@
     </nodeType>
     <nodeType>
       <id>ITEM</id>
-      <label>Item</label>
+      <label>Component (level=Item)</label>
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>UNITTITLE</canHaveChild>
@@ -574,7 +574,7 @@
     </nodeType>
     <nodeType>
       <id>FILE</id>
-      <label>File</label>
+      <label>Component (level=File)</label>
       <description/>
       <isTextNode>false</isTextNode>
       <canHaveChild>UNITTITLE</canHaveChild>
