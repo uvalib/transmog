@@ -210,6 +210,20 @@ function addDropZones(div) {
             drop: dropComponent
         });
 
+        $(this).dblclick(function() {
+            var index = getDropZoneIndex($(this));
+            var partId = $(this).parent().attr("id");
+            $.ajax({
+                type: "POST",
+                url: partId + "/new?index=" + index,
+                data: "",
+                success: replaceDocumentElement,
+                beforeSend: block($('.ROOT')),
+                complete: release
+            });
+
+        });
+
     });
 }
 
