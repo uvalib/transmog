@@ -20,7 +20,7 @@
         <block>
           <elementmatch type="pattern" id="firstline">((.*n\. ?d\.)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d;? ?)+) (\D.*) (Folder: (\d+))\s*</elementmatch>
           <elementmatch type="pattern" id="extent">(\d+ items?\s*)|(\d+ pages?\s*)</elementmatch>
-          <elementmatch type="pattern" id="abstract">.{70,}</elementmatch>
+          <elementmatch type="pattern" id="abstract">[^n0-9].{20,}</elementmatch>
         </block>
       </match>
       <action>
@@ -55,7 +55,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="firstline">((.*n\. ?d\.)|(\d\d\d\d-\d\d\d\d)|(\d\d\d\d; \d\d\d\d-\d\d\d\d)|(\d\d\d\d)|(\d\d\d\d-\d\d\d\d; \d\d\d\d)|(\d\d\d\d;? ?)+) (\D.*) (Folder: (\d+))\s*</elementmatch>
-          <elementmatch type="pattern" id="abstract">.{70,}</elementmatch>
+          <elementmatch type="pattern" id="abstract">[^n0-9].{20,}</elementmatch>
         </block>
       </match>
       <action>
