@@ -62,6 +62,9 @@ public class XmlSerializedProfile extends Profile {
     @XmlElementWrapper(name="nodeTypes")
     @XmlElement private XmlSerializedNodeType[] nodeType;
 
+    @XmlElementWrapper(name="validation")
+    @XmlElement(name="required") private RequiredPath[] requiredPaths;
+
     @XmlElementWrapper(name="rules")
     @XmlElement private XmlSerializedRule[] rule;
 
@@ -105,6 +108,19 @@ public class XmlSerializedProfile extends Profile {
         ArrayList<Rule> result = new ArrayList<Rule>();
         for (XmlSerializedRule r : rule) {
             result.add(r);
+        }
+        return result;
+    }
+
+    @Override
+    public List<ValidationResult> getValidationStatus(Document d) {
+        ArrayList<ValidationResult> result = new ArrayList<>();
+        if (requiredPaths == null) {
+            return result;
+        } else {
+            for (RequiredPath p : requiredPaths) {
+                result.add(new ValidationResult(d.hasPath(new Path(p.path)), p.reason));
+            }
         }
         return result;
     }
@@ -250,6 +266,11 @@ public class XmlSerializedProfile extends Profile {
 
         }
 
+    }
+
+    private static class RequiredPath {
+        @XmlAttribute private String path;
+        @XmlAttribute private String reason;
     }
 
     private static class XmlSerializedRule implements Rule {

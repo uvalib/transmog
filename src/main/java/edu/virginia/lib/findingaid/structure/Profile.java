@@ -32,6 +32,8 @@ public abstract class Profile {
 
     public abstract List<Rule> getRules();
 
+    public abstract List<ValidationResult> getValidationStatus(Document d);
+
     public abstract String transformDocument(Element el);
 
     public NodeType getNodeType(String id) {

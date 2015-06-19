@@ -5,8 +5,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by md5wz on 6/17/15.
@@ -121,5 +124,16 @@ public class ElementTest {
         assertEquals("Third element should have 1 fragment.", 1, third.fragments.size());
         assertEquals("Third element should new first fragment \"hi\".", "hi", third.fragments.get(0).getText());
         assertEquals("hi", third.getContentAsString());
+    }
+
+    @Test
+    public void testHasElement() {
+        Element e = new Element(p.getRootNodeType());
+        List<NodeType> childTypes = e.getType().possibleChildren();
+        e.addChild(new Element(childTypes.get(0)));
+        assertTrue(e.hasPath(new Path(e.getType().getId() + "/" + childTypes.get(0).getId())));
+        assertFalse(e.hasPath(new Path(e.getType().getId() + "/" + childTypes.get(1).getId())));
+        assertTrue(e.hasPath(new Path(e.getType().getId())));
+
     }
 }

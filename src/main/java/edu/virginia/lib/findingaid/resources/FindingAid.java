@@ -8,6 +8,7 @@ import edu.virginia.lib.findingaid.structure.Element;
 import edu.virginia.lib.findingaid.structure.Fragment;
 import edu.virginia.lib.findingaid.structure.NodeType;
 import edu.virginia.lib.findingaid.structure.Profile;
+import edu.virginia.lib.findingaid.structure.ValidationResult;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -44,7 +45,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Path("findingaids")
 public class FindingAid {
@@ -86,6 +86,31 @@ public class FindingAid {
             o.add(type.getId(), Json.createObjectBuilder().add("possibleChildren", arrayBuilder.build()).add("canContainText", type.isTextNode()).add("label", type.getDisplayLabel() == null || type.getDisplayLabel().trim().equals("") ? type.getId() : type.getDisplayLabel()));
         }
         return o.build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id: [^/]*}/status")
+    public JsonObject isDocumentValid(@PathParam("id") final String findingAidId) throws IOException {
+        Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+
+        /*
+         * { "unassigned" : 100,
+         *   "percent-complete" : "50%",
+         *   "validation" : [ ["x is required by y", true],
+         *                 [ ["z is required by a", false]]}
+         */
+        final int unassigned = doc.getUnassignedElementCount();
+        final int total = doc.getElementCount(".*");
+        final JsonObjectBuilder all = Json.createObjectBuilder();
+        all.add("unassigned", unassigned);
+        all.add("percent-complete", (100 - (100 * unassigned / total)) + "%");
+        final JsonArrayBuilder a = Json.createArrayBuilder();
+        for (ValidationResult v : doc.validatate()) {
+            a.add(Json.createArrayBuilder().add(v.getReason()).add(v.isValid()));
+        }
+        all.add("validation", a);
+        return all.build();
     }
 
     @POST

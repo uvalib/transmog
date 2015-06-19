@@ -67,6 +67,9 @@ function loadDocumentById(docid) {
                         });
                     });
 
+                    // add status bar
+                    $('<div id="status-bar"></div>').appendTo($('#floating-menu'));
+                    updateStatus();
 
                     // make it visible
                     $('#loading_document').hide();
@@ -82,7 +85,29 @@ function block(element) {
 }
 
 function release() {
+    updateStatus();
     $('#blank-it-out').remove();
+}
+
+function updateStatus() {
+    $.ajax({
+        type: "GET",
+        url: "status",
+        success: function (json) {
+            var html = '<div id="status-bar">';
+            html += '<span class="completion-percent">' + json["percent-complete"] + '</span> ';
+            for (var i = 0; i < json["validation"].length; i ++) {
+                if (json["validation"][i][1]) {
+                    html += '<a href="#" title="' + json["validation"][i][0] + '"><span class="glyphicon glyphicon-ok-circle valid" aria-hidden="true"></span></a> ';
+                } else {
+                    html += '<a href="#" title="' + json["validation"][i][0] + '"><span class="glyphicon glyphicon-remove-circle invalid" aria-hidden="true"></span></a> ';
+                }
+            }
+            html += '<span class="remaining">' + json["unassigned"] + ' unassigned sections remain.</span> ';
+            var $status = $('#status-bar');
+            $status.replaceWith(html);
+        }
+    });
 }
 
 function markUpDiv(jquery) {

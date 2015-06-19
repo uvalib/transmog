@@ -6,6 +6,12 @@
   <transformation>uvaead-schema.xsl</transformation>
   <rootNodeTypeId>DOCUMENT</rootNodeTypeId>
 
+  <validation>
+    <required path="DOCUMENT/UNITID" reason="ArchivesSpace requires an ead/archdesc/did/unitid element." />
+    <required path="DOCUMENT/EXTENT" reason="ArchivesSpace requires an ead/archdesc/did/pysdesc/extent element." />  
+    <required path="DOCUMENT/UNITDATE" reason="ArchivesSpace requires an ead/archdesc/did/unitdate element." />
+  </validation>
+
   <rules>
     <!-- HOLMES and BRANDT FINDING AID RULES -->
     <rule>
@@ -303,6 +309,8 @@
       <isTextNode>false</isTextNode>
       <canHaveChild>TITLEPROPER</canHaveChild>
       <canHaveChild>SUBTITLE</canHaveChild>
+      <canHaveChild>UNITDATE</canHaveChild>
+      <canHaveChild>UNITID</canHaveChild>
       <canHaveChild>ARCHIVIST</canHaveChild>
       <canHaveChild>MSS_NUM</canHaveChild>
       <canHaveChild>DSC_HEAD</canHaveChild>
@@ -344,6 +352,20 @@
     </nodeType>
     <nodeType>
       <id>MSS_NUM</id>
+      <label>Number (type=Accession)</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>UNITID</id>
+      <label>Unit ID</label>
+      <description></description>
+      <isTextNode>true</isTextNode>
+      <canHaveChild>TEXT</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>MSS_NUM</id>
       <label>Manuscript Number</label>
       <description></description>
       <isTextNode>true</isTextNode>
@@ -358,7 +380,7 @@
     </nodeType>
     <nodeType>
       <id>UNITDATE</id>
-      <label>Date</label>
+      <label>Unit Date</label>
       <description/>
       <isTextNode>true</isTextNode>
       <canHaveChild>TEXT</canHaveChild>

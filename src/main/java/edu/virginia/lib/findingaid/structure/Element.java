@@ -489,6 +489,25 @@ public class Element implements Serializable {
         throw new RuntimeException("Malformed XML: element " + startTag + " never ended!");
     }
 
+    public boolean hasPath(Path p) {
+        NodeType t = getProfile().getNodeType(p.getPathElement(0));
+        if (!t.equals(type)) {
+            return false;
+        } else {
+            Path nextPath = p.relativeToFirst();
+            if (nextPath == null) {
+                return true;
+            } else {
+                for (Element c : children) {
+                    if (c.hasPath(nextPath)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
     public boolean isUnassigned() {
         return this.type.equals(getProfile().getUnassignedType());
     }

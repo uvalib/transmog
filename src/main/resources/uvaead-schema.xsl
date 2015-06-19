@@ -32,9 +32,11 @@
       <archdesc level="collection">
         <did>
           <unittitle label="Title"><xsl:apply-templates mode="TITLEPROPER" select="TITLEPROPER/*" /></unittitle>
+          <xsl:apply-templates mode="DID" select="*" />
           <xsl:call-template name="physdesc">
             <xsl:with-param name="parent" select="current()" />
           </xsl:call-template>
+          
         </did>
         <descgrp type="admininfo">
           <xsl:apply-templates select="*" mode="ADMININFO" />
@@ -233,6 +235,10 @@
     <date><xsl:apply-templates /></date>
   </xsl:template>
   
+  <xsl:template match="UNITID" mode="DID">
+    <unitid><xsl:apply-templates mode="UNITID" select="*" /></unitid>
+  </xsl:template>
+  
   <xsl:template match="UNITDATE" mode="DID UNITTITLE">
     <xsl:variable name="text"><xsl:apply-templates select="*"/></xsl:variable>
     <xsl:analyze-string select="$text" regex="^([\d]+)[;-].*(\d\d\d\d)$">
@@ -267,7 +273,7 @@
     <xsl:apply-templates select="*" />
   </xsl:template>
 
-  <xsl:template match="span[@style='']" mode="#all">
+  <xsl:template match="span[@style='' or not(@style)]" mode="#all">
     <xsl:value-of select="text()" />
   </xsl:template>
   

@@ -11,6 +11,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class Document {
 
@@ -114,6 +117,35 @@ public class Document {
             }
         }
         return sb.toString();
+    }
+
+    public List<ValidationResult> validatate() {
+        return profile.getValidationStatus(this);
+    }
+
+    public int getUnassignedElementCount() {
+       return getElementCount("^(\\Q" + profile.getUnassignedType().getId() + "\\E)|(\\Q" + profile.getTableType().getId() +  "\\E)$");
+    }
+
+    public int getElementCount(String typeIdPattern) {
+        int count = 0;
+        List<Element> each = new ArrayList<Element>();
+        each.add(rootEl);
+        for (int i = 0; i < each.size(); i ++) {
+            Element e = each.get(i);
+            if (Pattern.matches(typeIdPattern, e.type.getId())) {
+                count++;
+            }
+            if (e.children != null) {
+                each.addAll(e.children);
+            }
+        }
+        return count;
+
+    }
+
+    public boolean hasPath(Path p) {
+        return rootEl.hasPath(p);
     }
 
     public boolean equals(Document otherDoc) {

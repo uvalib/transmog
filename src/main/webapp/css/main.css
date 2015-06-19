@@ -178,4 +178,12 @@ h1 {
     font-style: italic;
 }
 
+.invalid {
+    color: red;
+}
+
+.valid {
+    color: green;
+}
+
 
