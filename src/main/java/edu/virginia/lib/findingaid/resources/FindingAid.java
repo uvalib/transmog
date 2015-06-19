@@ -19,7 +19,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.xml.sax.SAXException;
 
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -227,6 +226,21 @@ public class FindingAid {
         fragment.setText(readContent(value));
         DocumentStore.getDocumentStore().saveDocument(doc);
         return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(element.printTreeXHTML().toString()).build();
+    }
+
+    /**
+     * A very special-purpose function that takes the given element and creates copies of it applied (with
+     * the given type) to each following element that has the same type as the first following element.
+     */
+    @POST
+    @Path("/{id: [^/]*}/{partId: [^/]*}/bulk-apply")
+    public Response bulkApply(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("assignType") final String type) throws IOException {
+        final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final Element element = doc.getRootElement().findById(partId);
+        final Element parent = element.getParent();
+        element.bulkApply(element.getProfile().getNodeType(type));
+        DocumentStore.getDocumentStore().saveDocument(doc);
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(parent.printTreeXHTML().toString()).build();
     }
 
     @POST

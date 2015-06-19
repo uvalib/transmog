@@ -296,7 +296,13 @@ function addToolbarForUnassigned(div) {
         }
     }
     toolbar += '</select> <a href="javascript:noop()" class="delete">(delete)</a>'
-             + ' <a href="javascript:noop()" class="split">(split text)</a></div>';
+             + ' <a href="javascript:noop()" class="split">(split text)</a>';
+
+    if (div.nextAll(".ASSIGNED").length > 0) {
+        toolbar += ' <a href="javascript:noop()" class="bulk-apply">(apply to multiple)</a>';
+    }
+
+    toolbar += '</div>';
     div.prepend($(toolbar));
 
     div.find('>.top-bar>.delete').click(function() {
@@ -350,6 +356,61 @@ function addToolbarForUnassigned(div) {
         });
 
     });
+
+    if (div.nextAll(".ASSIGNED").length > 0) {
+        var nextPartType = getPartType(div.nextAll(".ASSIGNED").first());
+        var nextPartTypeName = getLabel(nextPartType);
+
+        div.find('>.top-bar>.bulk-apply').click(function () {
+            var link = $(this);
+            var partId = link.parent().parent().attr('id');
+
+            var optionCount = 0;
+            var dialogText = '<div id="dialog" title="Apply to Multiple"><div class="instructions">The "apply to multiple" feature allows you to assign this element and apply (copy) it to each of the following \"' + nextPartTypeName + '\" elements until the next unassigned element is encountered.</div>';
+            dialogText += '<form><select id="dialog_assign">';
+            if (nextPartType in profile) {
+                for (i = 0; i < profile[nextPartType]["possibleChildren"].length; i++) {
+                    var possibleChild = profile[nextPartType]["possibleChildren"][i];
+                    if (profile[possibleChild]["canContainText"]) {
+                        optionCount ++;
+                        dialogText += '<option value="' + profile[nextPartType]["possibleChildren"][i] + '">' + getLabel(profile[nextPartType]["possibleChildren"][i]) + '</option>';
+                    }
+                }
+            }
+            dialogText +='</form></div>';
+            if (optionCount == 0) {
+                alert('There is no way to apply this element to "' + nextPartName + '".');
+                return;
+            }
+
+            var $dialog = $(dialogText);
+
+            $dialog.insertAfter(link);
+            $dialog.dialog({
+                autoOpen: true,
+                modal: true,
+                height: 300,
+                width: 500,
+                buttons: {
+                    "Assign": function () {
+                        $.ajax({
+                            type: "POST",
+                            url: partId + '/bulk-apply?assignType=' + $dialog.find('#dialog_assign').val(),
+                            data: "none",
+                            success: replaceDocumentElement
+                        });
+                        $dialog.dialog("close");
+                    },
+                    Cancel: function () {
+                        $dialog.dialog("close");
+                    }
+                },
+                close: function () {
+                    $dialog.remove();
+                }
+            });
+        });
+    }
 
     div.draggable( {
         cursor: 'move',

@@ -290,6 +290,37 @@ public class Element implements Serializable {
         this.parent = newParent;
     }
 
+    public int bulkApply(NodeType assign) {
+        int count = 0;
+        if (!isUnassigned()) {
+            throw new IllegalArgumentException();
+        }
+        NodeType t = null;
+        for (int i = getIndexWithinParent() + 1; i < parent.children.size(); i ++) {
+            final Element e = parent.children.get(i);
+            if (t == null) {
+                t = e.type;
+                if (!t.possibleChildren().contains(assign)) {
+                    throw new IllegalArgumentException("Cannot include a " + assign.getId() + " within a " + e.getType().getId() + ".");
+                }
+            }
+            if (e.isUnassigned()) {
+                break;
+            }
+            if (t.equals(e.type)) {
+                Element newEl = new Element(assign, this.getContent());
+                e.addChild(newEl);
+                count ++;
+            } else {
+                break;
+            }
+        }
+        if (count > 0) {
+            removeFromParent();
+        }
+        return count;
+    }
+
     public void addChild(Element newEl) {
         addChild(newEl, -1);
     }
