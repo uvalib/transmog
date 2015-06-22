@@ -150,7 +150,7 @@
   </xsl:template>
   
   <xsl:template match="BOX" mode="DID">
-    <container label="Text" type="box"><xsl:apply-templates select="*" mode="BOX" /></container>
+    <container label="Text" type="box"><xsl:attribute name="id" select="@id" /><xsl:apply-templates select="*" mode="BOX" /></container>
   </xsl:template>
   
   <xsl:template match="BOX_FOLDER" mode="DID">
@@ -158,7 +158,12 @@
   </xsl:template>
   
   <xsl:template match="FOLDER" mode="DID">
-    <container label="Text" type="folder"><xsl:apply-templates select="*" mode="FOLDER" /></container>
+    <container label="Text" type="folder">
+      <xsl:if test="../BOX">
+        <xsl:attribute name="parent" select="../BOX/@id" />
+      </xsl:if>
+      <xsl:apply-templates select="*" mode="FOLDER" />
+    </container>
   </xsl:template>
 
   <xsl:template match="BIOGHIST" mode="ARCHDESC">
