@@ -127,7 +127,7 @@
       <description/>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Jackets\s*</elementmatch>
+          <elementmatch type="pattern" id="head">Jackets?\s*</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
@@ -142,7 +142,7 @@
       <description/>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Dating keys\s*</elementmatch>
+          <elementmatch type="pattern" id="head">Dating keys?\s*</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
@@ -187,14 +187,39 @@
       <description/>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Discontinued titles\s*</elementmatch>
-          <elementmatch type="pattern" id="paragraph">.*</elementmatch>
+          <elementmatch type="pattern" id="head">Discontinued( titles)?\s*</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+">(None\.)|(.*\(\d\d\d\d\))</elementmatch>
         </block>
       </match>
       <action>
         <assignblock path="DISCONTINUED_TITLES">
           <assign matchedId="head" path="HEAD"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description/>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  )(.+)(\.  \(ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="PARAGRAPH/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="PARAGRAPH/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="PARAGRAPH/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="PARAGRAPH/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="PARAGRAPH/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="PARAGRAPH/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="PARAGRAPH/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="8" path="PARAGRAPH/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+          
         </assignblock>
       </action>
     </rule>
@@ -212,12 +237,16 @@
       <canHaveChild>NUMBER_OF_TITLES</canHaveChild>
       <canHaveChild>TITLE_PAGE</canHaveChild>
       <canHaveChild>BINDING</canHaveChild>
+      <canHaveChild>SECTION</canHaveChild>
       <canHaveChild>ENDPAPER</canHaveChild>
       <canHaveChild>JACKET</canHaveChild>
       <canHaveChild>PRICE</canHaveChild>
       <canHaveChild>DATING_KEYS</canHaveChild>
       <canHaveChild>TITLES_S_S_D</canHaveChild>
       <canHaveChild>DISCONTINUED_TITLES</canHaveChild>
+      <canHaveChild>BOOK</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>PARAGRAPH</canHaveChild>
     </nodeType>
     <nodeType>
       <id>TITLE</id>
@@ -298,6 +327,14 @@
       <canHaveChild>PARAGRAPH</canHaveChild>
     </nodeType>
     <nodeType>
+      <id>SECTION</id>
+      <label>Section</label>
+      <description />
+      <isTextNode>false</isTextNode>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+    </nodeType>
+    <nodeType>
       <id>TITLES_S_S_D</id>
       <label>Titles sought, suggested, declined</label>
       <description />
@@ -314,6 +351,15 @@
       <canHaveChild>PARAGRAPH</canHaveChild>
     </nodeType>
     <nodeType>
+      <id>BOOK</id>
+      <label>Book</label>
+      <description />
+      <isTextNode>false</isTextNode>
+      <canHaveChild>NUMBER</canHaveChild>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+    </nodeType>
+    <nodeType>
       <id>HEAD</id>
       <label>Heading</label>
       <description />
@@ -325,6 +371,54 @@
       <description />
       <isTextNode>true</isTextNode>
     </nodeType>
+    <nodeType>
+      <id>METADATA</id>
+      <label>Metadata</label>
+      <description /> 
+      <isTextNode>false</isTextNode>
+      <canHaveChild>AUTHOR</canHaveChild>
+      <canHaveChild>TEXT</canHaveChild>
+      <canHaveChild>TITLE</canHaveChild>
+      <canHaveChild>DATE_RANGE</canHaveChild>
+      <canHaveChild>ML_NUMBER</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>TEXT</id>
+      <label>Text</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>AUTHOR</id>
+      <label>Author</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>TITLE</id>
+      <label>Title</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>DATE_RANGE</id>
+      <label>Date range</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>ML_NUMBER</id>
+      <label>ML Number</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>NUMBER</id>
+      <label>Number</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
   </nodeTypes>
+  
 </structure>
 
