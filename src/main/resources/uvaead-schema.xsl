@@ -36,7 +36,9 @@
           <xsl:call-template name="physdesc">
             <xsl:with-param name="parent" select="current()" />
           </xsl:call-template>
-          
+          <langmaterial>
+            <language langcode="eng">English</language>
+          </langmaterial>
         </did>
         <descgrp type="admininfo">
           <xsl:apply-templates select="*" mode="ADMININFO" />
@@ -119,6 +121,30 @@
       <xsl:apply-templates select="*" mode="C02" />
     </c02>
   </xsl:template>
+  
+  <xsl:template match="ITEM" mode="C02">
+    <c03 level="item">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
+      </did>
+      <xsl:apply-templates select="*" mode="C03" />
+    </c03>
+  </xsl:template>
+  
+  <xsl:template match="FILE" mode="C02">
+    <c03 level="file">
+      <did>
+        <xsl:apply-templates select="*" mode="DID" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
+      </did>
+      <xsl:apply-templates select="*" mode="C03" />
+    </c03>
+  </xsl:template>
 
   <xsl:template name="physdesc">
     <xsl:param name="parent" required="yes" />
@@ -150,7 +176,7 @@
   </xsl:template>
   
   <xsl:template match="BOX" mode="DID">
-    <container label="Text" type="box"><xsl:attribute name="id" select="@id" /><xsl:apply-templates select="*" mode="BOX" /></container>
+    <container label="Text" type="box"><xsl:attribute name="id" select="concat('transmogid_', @id)" /><xsl:apply-templates select="*" mode="BOX" /></container>
   </xsl:template>
   
   <xsl:template match="BOX_FOLDER" mode="DID">
@@ -160,7 +186,7 @@
   <xsl:template match="FOLDER" mode="DID">
     <container label="Text" type="folder">
       <xsl:if test="../BOX">
-        <xsl:attribute name="parent" select="../BOX/@id" />
+        <xsl:attribute name="parent" select="concat('transmogid_', ../BOX/@id)" />
       </xsl:if>
       <xsl:apply-templates select="*" mode="FOLDER" />
     </container>
