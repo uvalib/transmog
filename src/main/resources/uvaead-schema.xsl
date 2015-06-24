@@ -204,10 +204,10 @@
     </phystech>
   </xsl:template>
 
-  <xsl:template match="ARRANGMENT" mode="ARCHDESC">
-    <arrangment>
+  <xsl:template match="ARRANGEMENT" mode="ARCHDESC">
+    <arrangement>
       <xsl:apply-templates select="*" mode="ARRANGEMENT" />
-    </arrangment>
+    </arrangement>
   </xsl:template>
 
   <xsl:template match="ACCESSRESTRICT" mode="ADMININFO">
