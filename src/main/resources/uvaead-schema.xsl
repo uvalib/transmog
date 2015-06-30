@@ -33,6 +33,7 @@
         <did>
           <unittitle label="Title"><xsl:apply-templates mode="TITLEPROPER" select="TITLEPROPER/*" /></unittitle>
           <xsl:apply-templates mode="DID" select="*" />
+          <xsl:apply-templates select="*" mode="DID-LAST" />
           <xsl:call-template name="physdesc">
             <xsl:with-param name="parent" select="current()" />
           </xsl:call-template>
@@ -57,6 +58,10 @@
     <c01 level="series">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
+        <xsl:call-template name="physdesc">
+          <xsl:with-param name="parent" select="current()" />
+        </xsl:call-template>
       </did>
       <xsl:apply-templates select="*" mode="C01" />
     </c01>
@@ -66,6 +71,7 @@
     <c01 level="item">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -78,6 +84,7 @@
     <c01 level="file">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -90,6 +97,7 @@
     <c02 level="subseries">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -102,6 +110,7 @@
     <c02 level="item">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -114,6 +123,7 @@
     <c02 level="file">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -126,6 +136,7 @@
     <c03 level="item">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -138,6 +149,7 @@
     <c03 level="file">
       <did>
         <xsl:apply-templates select="*" mode="DID" />
+        <xsl:apply-templates select="*" mode="DID-LAST" />
         <xsl:call-template name="physdesc">
           <xsl:with-param name="parent" select="current()" />
         </xsl:call-template>
@@ -183,10 +195,19 @@
     <container label="Text" type="box-folder"><xsl:apply-templates select="*" mode="BOX_FOLDER" /></container>
   </xsl:template>
   
-  <xsl:template match="FOLDER" mode="DID">
+  <xsl:template match="FOLDER" mode="DID-LAST">
     <container label="Text" type="folder">
+      <xsl:if test="count(../BOX) > 1">
+        <xsl:variable name="text">
+          <xsl:for-each select="../UNITTITLE//text()">
+            <xsl:value-of select="."/>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:message>Item  "<xsl:value-of select="normalize-space($text)" />" has more than one box!</xsl:message>
+      </xsl:if>
+      
       <xsl:if test="../BOX">
-        <xsl:attribute name="parent" select="concat('transmogid_', ../BOX/@id)" />
+        <xsl:attribute name="parent" select="concat('transmogid_', ../BOX[1]/@id)" />
       </xsl:if>
       <xsl:apply-templates select="*" mode="FOLDER" />
     </container>
