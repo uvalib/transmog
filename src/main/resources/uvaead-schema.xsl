@@ -337,7 +337,39 @@
                     </unitdate>
                   </xsl:matching-substring>
                   <xsl:non-matching-substring>
-                    <unitdate type="inclusive"><xsl:value-of select="$text"></xsl:value-of></unitdate>
+                    <xsl:analyze-string select="$text" regex="^(\d\d\d\d)-(\d+)-(\d\d\d\d)-(\d+)$">
+                      <xsl:matching-substring>
+                        <xsl:variable name="year" select="format-number(number(regex-group(1)), '0000')"/>
+                        <xsl:variable name="month" select="format-number(number(regex-group(2)), '00')"/>
+                        <xsl:variable name="endYear" select="format-number(number(regex-group(3)), '0000')"/>
+                        <xsl:variable name="endMonth" select="format-number(number(regex-group(4)), '00')"/>
+                        <unitdate>
+                          <xsl:attribute name="normal" select="concat($year, $month, '/', $endYear, $endMonth)" />
+                          <xsl:attribute name="type">inclusive</xsl:attribute>
+                          <xsl:value-of select="$text" />
+                        </unitdate>
+                      </xsl:matching-substring>
+                      <xsl:non-matching-substring>
+                        <xsl:analyze-string select="$text" regex="^(\d\d\d\d)-(\d+)-(\d+)-(\d\d\d\d)-(\d+)-(\d+)$">
+                          <xsl:matching-substring>
+                            <xsl:variable name="year" select="format-number(number(regex-group(1)), '0000')"/>
+                            <xsl:variable name="month" select="format-number(number(regex-group(2)), '00')"/>
+                            <xsl:variable name="day" select="format-number(number(regex-group(3)), '00')"/>
+                            <xsl:variable name="endYear" select="format-number(number(regex-group(4)), '0000')"/>
+                            <xsl:variable name="endMonth" select="format-number(number(regex-group(5)), '00')"/>
+                            <xsl:variable name="endDay" select="format-number(number(regex-group(6)), '00')"/>
+                            <unitdate>
+                              <xsl:attribute name="normal" select="concat($year, $month, $day, '/', $endYear, $endMonth, $endDay)" />
+                              <xsl:attribute name="type">inclusive</xsl:attribute>
+                              <xsl:value-of select="$text" />
+                            </unitdate>
+                          </xsl:matching-substring>
+                          <xsl:non-matching-substring>
+                            <unitdate type="inclusive"><xsl:value-of select="$text"></xsl:value-of></unitdate>
+                          </xsl:non-matching-substring>
+                        </xsl:analyze-string>
+                      </xsl:non-matching-substring>
+                    </xsl:analyze-string>
                   </xsl:non-matching-substring>
                 </xsl:analyze-string>
               </xsl:non-matching-substring>
