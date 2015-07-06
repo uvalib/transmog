@@ -193,8 +193,7 @@ public class Element implements Serializable {
             }
         }
         int insertionPoint = getIndexWithinParent();
-        for (int i = 0; i < this.children.size(); i ++) {
-            Element row = this.children.get(i);
+        for (Element row : new ArrayList<Element>(this.children)) {
             row.type = getProfile().getNodeType(rowTypeString);
             row.moveElement(parent, insertionPoint ++);
             for (int j = 0; j < row.children.size(); j ++) {
