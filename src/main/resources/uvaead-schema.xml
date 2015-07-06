@@ -8,7 +8,7 @@
 
   <validation>
     <required path="DOCUMENT/UNITID" reason="ArchivesSpace requires an ead/archdesc/did/unitid element." />
-    <required path="DOCUMENT/EXTENT" reason="ArchivesSpace requires an ead/archdesc/did/pysdesc/extent element." />  
+    <required path="DOCUMENT/EXTENT" reason="ArchivesSpace requires an ead/archdesc/did/pysdesc/extent element." />
     <required path="DOCUMENT/UNITDATE" reason="ArchivesSpace requires an ead/archdesc/did/unitdate element." />
   </validation>
 
@@ -83,7 +83,7 @@
       </action>
     </rule>
     <!-- END OF HOLMES FINDING AID RULES -->
-    
+
     <rule>
       <description>When the first paragraph starts with "Letters of" or "Papers of", consider it the title.</description>
       <match>
@@ -608,6 +608,7 @@
       <canHaveChild>EXTENT</canHaveChild>
       <canHaveChild>PHYSFACET</canHaveChild>
       <canHaveChild>PHYSTECH</canHaveChild>
+      <canHaveChild>ITEM</canHaveChild>
     </nodeType>
     <nodeType>
       <id>EXTENT</id>
