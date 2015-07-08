@@ -194,19 +194,23 @@ function addDropZones(div) {
             greedy: true,
             hoverClass: "drop-hover",
             accept: function(dropped) {
-                var type = getPartType(dropped);
-                var parentType = getPartType($(this).parent());
-                console.log('type=' + type + ", parentType=" + parentType);
-                if (type == "UNASSIGNED" || type == "UNASSIGNED_TABLE") {
-                    return true;
-                }
-                for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
-                    if (type == profile[parentType]["possibleChildren"][i]) {
+                var $target = $(this);
+                var failed = 0;
+                if (dropped.is(".selected-section")) {
+                    $('.selected-section').each(function() {
+                        if (!canAddChild($(this), $target)) {
+                            failed ++;
+                        }
+                        });
+                    if (failed > 1) {
+                        return false;
+                    } else {
                         return true;
                     }
+                } else {
+                    return canAddChild(dropped, $target);
                 }
-                return false;
-                },
+            },
             drop: dropComponent
         });
 
@@ -227,6 +231,22 @@ function addDropZones(div) {
     });
 }
 
+function canAddChild($dropped, $target) {
+    var type = getPartType($dropped);
+    var parentType = getPartType($target.parent());
+    if (type == "UNASSIGNED" || type == "UNASSIGNED_TABLE") {
+        return true;
+    }
+    for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
+        if (type == profile[parentType]["possibleChildren"][i]) {
+            return true;
+        }
+    }
+    console.log('Cannot add child of type "' + type + '" to "' + parentType + '".');
+    return false;
+
+}
+
 function getDropZoneIndex(dropzoneDiv) {
     var index = 0;
     var classes = dropzoneDiv.attr("class").split(' ');
@@ -243,9 +263,18 @@ function dropComponent(event, ui) {
     var partId = ui.draggable.attr("id");
     var newParentId = $(this).parent().attr("id");
     var index = getDropZoneIndex($(this));
+    var url = partId + "?newParent=" + newParentId + "&index=" + index;
+    if (ui.draggable.is('.selected-section')) {
+        $('.selected-section').each(function() {
+            var $selection = $(this);
+            if ($selection.attr("id") != partId) {
+                url += '&additionalSelection=' + $selection.attr("id");
+            }
+        });
+    }
     $.ajax({
         type: "MOVE",
-        url: partId + "?newParent=" + newParentId + "&index=" + index,
+        url: url,
         beforeSend: block($('.ROOT')),
         complete: release,
         success: function(htmlFragment) {
@@ -296,8 +325,26 @@ function addToolbarForAssigned(div) {
 
     div.draggable( {
         cursor: 'move',
-        revert: "invalid"
+        revert: "invalid",
+        helper: dragHelper
     } );
+
+    div.click(toggleAdditionalSelection);
+}
+
+function toggleAdditionalSelection(e) {
+    if (e.ctrlKey) {
+        var $dt = $(e.delegateTarget);
+        if ($dt.parents().is(".selected-section") == 0) {
+            $dt.toggleClass("selected-section");
+            if ($dt.is(".selected-section")) {
+                $dt.find(".selected-section").each(function() { $(this).removeClass("selected-section"); })
+            }
+        }
+        e.stopImmediatePropagation();
+    } else {
+        $('.selected-section').removeClass("selected-section");
+    }
 }
 
 function addToolbarForUnassigned(div) {
@@ -428,8 +475,11 @@ function addToolbarForUnassigned(div) {
 
     div.draggable( {
         cursor: 'move',
-        revert: "invalid"
+        revert: "invalid",
+        helper: dragHelper
     } );
+
+    div.click(toggleAdditionalSelection);
 
 }
 
@@ -542,7 +592,15 @@ function validateTableForm() {
 }
 
 function dragHelper(event) {
-    return '<div id="dragging">Drop this between elements to move the table.</div>';
+    if ($(event.delegateTarget).is(".UNASSIGNED_TABLE")) {
+        return '<div id="dragging">Drop this between elements to move the table.</div>';
+    } else if ($(event.delegateTarget).is(".selected-section")) {
+        return '<div id="dragging">Drop this to move ' + $('.selected-section').size() + ' selected elements.</div>';
+        return $(event.delegateTarget);
+    } else {
+        return $(event.delegateTarget);
+
+    }
 }
 
 function selectTableAssignment() {

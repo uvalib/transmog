@@ -210,14 +210,14 @@
       <action>
         <assignblock path="BOOK">
           <assign matchedId="number" path="NUMBER"/>
-          <assign matchedId="head" capturingGroup="1" path="PARAGRAPH/AUTHOR"/>
-          <assign matchedId="head" capturingGroup="2" path="PARAGRAPH/TEXT"/>
-          <assign matchedId="head" capturingGroup="3" path="PARAGRAPH/TITLE"/>
-          <assign matchedId="head" capturingGroup="4" path="PARAGRAPH/TEXT"/>
-          <assign matchedId="head" capturingGroup="5" path="PARAGRAPH/DATE_RANGE"/>
-          <assign matchedId="head" capturingGroup="6" path="PARAGRAPH/TEXT"/>
-          <assign matchedId="head" capturingGroup="7" path="PARAGRAPH/ML_NUMBER"/>
-          <assign matchedId="head" capturingGroup="8" path="PARAGRAPH/TEXT"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
           
         </assignblock>

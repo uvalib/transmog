@@ -384,13 +384,19 @@ public class FindingAid {
      * is included as the "newParent" query parameter.
      * @returns the XHTML tree for the updated newParent element
      */
-    public Response moveComponent(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("newParent") final String newParentId, @QueryParam("index") final int index) throws IOException {
+    public Response moveComponent(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("newParent") final String newParentId, @QueryParam("index") int index, @QueryParam("additionalSelection") final List<String> selection) throws IOException {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
         final Element element = doc.getRootElement().findById(partId);
         final Element newParent = doc.getRootElement().findById(newParentId);
         element.moveElement(newParent, index);
+        if (selection != null) {
+            for (String s : selection) {
+                final Element el = doc.getRootElement().findById(s);
+                el.moveElement(newParent, ++ index);
+            }
+        }
         DocumentStore.getDocumentStore().saveDocument(doc);
-        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(newParent.printTreeXHTML().toString()).build();
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(doc.getRootElement().printTreeXHTML().toString()).build();
     }
 
     private String readContent(InputStream text) throws IOException {
