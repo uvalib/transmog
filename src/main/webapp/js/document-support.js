@@ -333,7 +333,7 @@ function addToolbarForAssigned(div) {
 }
 
 function toggleAdditionalSelection(e) {
-    if (e.ctrlKey) {
+    if (e.shiftKey) {
         var $dt = $(e.delegateTarget);
         if ($dt.parents().is(".selected-section") == 0) {
             $dt.toggleClass("selected-section");
