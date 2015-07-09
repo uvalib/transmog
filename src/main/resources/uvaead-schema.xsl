@@ -191,8 +191,8 @@
     <container label="Text" type="box"><xsl:attribute name="id" select="concat('transmogid_', @id)" /><xsl:apply-templates select="*" mode="BOX" /></container>
   </xsl:template>
   
-  <xsl:template match="BOX_FOLDER" mode="DID">
-    <container label="Text" type="box-folder"><xsl:apply-templates select="*" mode="BOX_FOLDER" /></container>
+  <xsl:template match="BOXFOLDER" mode="DID">
+    <container label="Text" type="box-folder"><xsl:apply-templates select="*" mode="BOXFOLDER" /></container>
   </xsl:template>
   
   <xsl:template match="FOLDER" mode="DID-LAST">
