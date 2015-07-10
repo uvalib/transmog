@@ -319,7 +319,7 @@
                 <xsl:variable name="year" select="format-number(number(regex-group(1)), '0000')"/>
                 <xsl:variable name="month" select="format-number(number(regex-group(2)), '00')"/>
                 <unitdate>
-                  <xsl:attribute name="normal" select="concat($year, $month)" />
+                  <xsl:attribute name="normal" select="concat($year, '-', $month)" />
                   <xsl:attribute name="type">inclusive</xsl:attribute>
                   <xsl:value-of select="$text" />
                 </unitdate>
@@ -331,7 +331,7 @@
                     <xsl:variable name="month" select="format-number(number(regex-group(2)), '00')"/>
                     <xsl:variable name="day" select="format-number(number(regex-group(3)), '00')"/>
                     <unitdate>
-                      <xsl:attribute name="normal" select="concat($year, $month, $day)" />
+                      <xsl:attribute name="normal" select="concat($year, '-', $month, '-', $day)" />
                       <xsl:attribute name="type">inclusive</xsl:attribute>
                       <xsl:value-of select="$text" />
                     </unitdate>
@@ -344,7 +344,7 @@
                         <xsl:variable name="endYear" select="format-number(number(regex-group(3)), '0000')"/>
                         <xsl:variable name="endMonth" select="format-number(number(regex-group(4)), '00')"/>
                         <unitdate>
-                          <xsl:attribute name="normal" select="concat($year, $month, '/', $endYear, $endMonth)" />
+                          <xsl:attribute name="normal" select="concat($year, '-',  $month, '/', $endYear, '-', $endMonth)" />
                           <xsl:attribute name="type">inclusive</xsl:attribute>
                           <xsl:value-of select="$text" />
                         </unitdate>
@@ -359,7 +359,7 @@
                             <xsl:variable name="endMonth" select="format-number(number(regex-group(5)), '00')"/>
                             <xsl:variable name="endDay" select="format-number(number(regex-group(6)), '00')"/>
                             <unitdate>
-                              <xsl:attribute name="normal" select="concat($year, $month, $day, '/', $endYear, $endMonth, $endDay)" />
+                              <xsl:attribute name="normal" select="concat($year, '-', $month, '-',  $day, '/', $endYear, '-', $endMonth, '-',  $endDay)" />
                               <xsl:attribute name="type">inclusive</xsl:attribute>
                               <xsl:value-of select="$text" />
                             </unitdate>
