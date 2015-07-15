@@ -198,7 +198,7 @@ function addDropZones(div) {
                 var failed = 0;
                 if (dropped.is(".selected-section")) {
                     $('.selected-section').each(function() {
-                        if (!canAddChild($(this), $target)) {
+                        if (!canDrop($(this), $target)) {
                             failed ++;
                         }
                         });
@@ -208,7 +208,7 @@ function addDropZones(div) {
                         return true;
                     }
                 } else {
-                    return canAddChild(dropped, $target);
+                    return canDrop(dropped, $target);
                 }
             },
             drop: dropComponent
@@ -231,9 +231,13 @@ function addDropZones(div) {
     });
 }
 
-function canAddChild($dropped, $target) {
+function canDrop($dropped, $target) {
     var type = getPartType($dropped);
     var parentType = getPartType($target.parent());
+    return canAddChild(type, parentType);
+}
+
+function canAddChild(type, parentType) {
     if (type == "UNASSIGNED" || type == "UNASSIGNED_TABLE") {
         return true;
     }
@@ -244,7 +248,6 @@ function canAddChild($dropped, $target) {
     }
     console.log('Cannot add child of type "' + type + '" to "' + parentType + '".');
     return false;
-
 }
 
 function getDropZoneIndex(dropzoneDiv) {
@@ -288,7 +291,7 @@ function addToolbarForAssigned(div) {
     var type = getPartType($(div));
     var label = getLabel(type);
     if (div.find(".ASSIGNED, .UNASSIGNED").size() == 0) {
-        div.prepend('<div class="top-bar"><span class="section-label">' + label + '</span> <a href="javascript:noop()" class="reassign">(reassign)</a> <a href="javascript:noop()" class="insert">(add child)</a></div>');
+        div.prepend('<div class="top-bar"><span class="section-label">' + label + '</span> <a href="javascript:noop()" class="reassign">(reassign)</a> <a href="javascript:noop()" class="insert">(add child)</a> <a href="javascript:noop()" class="apply-to-selection">(copy to selected)</a></div>');
         div.find('>.top-bar>.reassign').click(function() {
             var link = $(this);
             var partId = link.parent().parent().attr('id');
@@ -306,6 +309,42 @@ function addToolbarForAssigned(div) {
     } else {
         div.prepend('<div class="top-bar"><span class="section-label">' + label + '</span> <a href="javascript:noop()" class="insert">(add child)</a></div>');
     }
+
+    if ($('.selected-section').length == 0) {
+        div.find('.apply-to-selection').hide();
+    }
+
+    div.find('.apply-to-selection').click(function() {
+        var error = "";
+        $('.selected-section').each(function() {
+            if (!canAddChild(getPartType($(div)), getPartType($(this)))) {
+                error += 'You cannot add a "' + profile[type]["label"] + '" to a "' + profile[getPartType($(this))]["label"] + '".\n';
+            }
+        });
+        if (error.length > 0) {
+            alert(error);
+        } else {
+            // copy to the selection
+            var partId = $(div).attr('id');
+            var url = partId + "/copy-to?dummy=1";
+            $('.selected-section').each(function() {
+                var $selection = $(this);
+                if ($selection.attr("id") != partId) {
+                    url += '&selection=' + $selection.attr("id");
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: url,
+                beforeSend: block($('.ROOT')),
+                complete: release,
+                success: function(htmlFragment) {
+                    replaceDocumentElement(htmlFragment);
+                }
+            });
+        }
+    });
+
     div.find('>.top-bar>.insert').click(function() {
         var link = $(this);
         var index = getDropZoneIndex($(this).parent());
@@ -344,6 +383,11 @@ function toggleAdditionalSelection(e) {
         e.stopImmediatePropagation();
     } else {
         $('.selected-section').removeClass("selected-section");
+    }
+    if ($('.selected-section').length > 0) {
+        $('.apply-to-selection').show();
+    } else {
+        $('.apply-to-selection').hide();
     }
 }
 

@@ -244,6 +244,21 @@ public class FindingAid {
     }
 
     @POST
+    @Path("/{id: [^/]*}/{partId: [^/]*}/copy-to")
+    public Response copyTo(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("selection") final List<String> selection) throws IOException {
+        final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        final Element element = doc.getRootElement().findById(partId);
+        final Element parent = element.getParent();
+        for (String selectionId : selection) {
+            Element selectedEl = doc.getRootElement().findById(selectionId);
+            Element copy = new Element(element.getType(), element.getContent());
+            selectedEl.addChild(copy);
+        }
+        DocumentStore.getDocumentStore().saveDocument(doc);
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(doc.getRootElement().printTreeXHTML().toString()).build();
+    }
+
+    @POST
     @Path("/{id: [^/]*}/{partId: [^/]*}/table")
     public Response processTable(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("rowType") final String rowType, @QueryParam("colTypes") final List<String> colTypes) {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
