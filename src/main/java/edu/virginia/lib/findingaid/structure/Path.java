@@ -1,11 +1,18 @@
 package edu.virginia.lib.findingaid.structure;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Path {
 
     private String[] pathElements;
 
     public Path(String path) {
         pathElements = path.split("/");
+    }
+
+    public Path(List<String> types) {
+        pathElements = new ArrayList<String>(types).toArray(new String[0]);
     }
 
     private Path(String[] pathElements) {

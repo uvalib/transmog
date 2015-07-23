@@ -245,6 +245,19 @@ public class Element implements Serializable {
         }
     }
 
+    public void assignNewPath(Path path) {
+        final Profile s = getProfile();
+        if (path.depth() == 1) {
+            assign(s.getNodeType(path.getPathElement(0)));
+        } else {
+            Element newParent = new Element(getProfile().getNodeType(path.getPathElement(0)));
+            parent.addChild(newParent, getIndexWithinParent());
+            moveElement(newParent, newParent.getChildren().size());
+            assignNewPath(path.relativeToFirst());
+        }
+    }
+
+
     /**
      * Assigns this element to the given type and bumps the content down to a new
      * UNASSIGNED child.

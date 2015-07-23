@@ -71,6 +71,16 @@ function loadDocumentById(docid) {
                     $('<div id="status-bar"></div>').appendTo($('#floating-menu'));
                     updateStatus();
 
+                    // create the selection panel
+                    $selectionPanel = $('<div id="selection-panel" />');
+                    $selectionPanel.append('<div class="summary"/>');
+                    $selectionPanel.append('<button id="assign-selection">Assign selected</button>');
+                    $selectionPanel.hide();
+                    $selectionPanel.insertBefore($('.ROOT'));
+
+                    $selectionPanel.find('#assign-selection').click(assignSelectionDialog);
+
+
                     // make it visible
                     $('#loading_document').hide();
                     $('#workspace').parent().show();
@@ -79,6 +89,80 @@ function loadDocumentById(docid) {
         }});
 }
 
+function assignSelectionDialog(button, valueArray) {
+    valueArray = valueArray || [];
+    var parentType;
+    if (valueArray.length == 0) {
+        parentType = getPartType($('.selected-section').first().parent());
+    } else {
+        parentType = valueArray[valueArray.length - 1];
+    }
+    var dialogText = '<div id="dialog" title="Assign type to selection">'
+    dialogText += '<form><select id="dialog_bulk_assign">';
+    if (parentType in profile) {
+        for (i = 0; i < profile[parentType]["possibleChildren"].length; i++) {
+            var possibleChild = profile[parentType]["possibleChildren"][i];
+            dialogText += '<option value="' + profile[parentType]["possibleChildren"][i] + '">' + getLabel(profile[parentType]["possibleChildren"][i]) + '</option>';
+        }
+    }
+    dialogText +='</form></div>';
+
+
+    var $dialog = $(dialogText);
+
+
+    $dialog.insertAfter($('.ROOT'));
+    $('#dialog').dialog({
+        autoOpen: true,
+        modal: true,
+        height: 200,
+        width: 600,
+        buttons: {
+            "Bulk Apply": function() {
+                var selection = $('#dialog_bulk_assign').val();
+                var canContainText = profile[selection]["canContainText"];
+                valueArray.push(selection);
+                if (canContainText) {
+                    var url = "batch-apply?";
+                    var query = "";
+                    var $selection = $('.selected-section');
+                    for (var i = 0; i < $selection.size(); i ++) {
+                        var $current = $($selection.get(i));
+                        if (query.length > 0) {
+                            query += "&";
+                        }
+                        query += "partId=" + $current.attr('id');
+                    }
+                    for (var i = 0; i < valueArray.length; i ++) {
+                        query += "&type=" + valueArray[i];
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "batch-apply?" + query,
+                        data: "no data",
+                        beforeSend: block($('.ROOT')),
+                        complete: release,
+                        success: replaceDocumentElement
+                     });
+
+                } else {
+                    //alert("show new dialog");
+                    $dialog.dialog("close");
+                    assignSelectionDialog(button, valueArray);
+                }
+                $dialog.dialog("close");
+
+
+            },
+            Cancel: function() {
+                $dialog.dialog("close");
+            }
+        },
+        close: function() {
+            $dialog.remove();
+        }
+    });
+}
 
 function block(element) {
     $('<div class="ui-widget-overlay ui-front" id="blank-it-out" style="z-index: 100;"></div>').appendTo(element);
@@ -385,10 +469,59 @@ function toggleAdditionalSelection(e) {
         $('.selected-section').removeClass("selected-section");
     }
     if ($('.selected-section').length > 0) {
-        $('.apply-to-selection').show();
+        displaySelectionOptions();
     } else {
-        $('.apply-to-selection').hide();
+        hideSelectionOptions();
     }
+}
+
+function displaySelectionOptions() {
+    var $applyLinks = $('.apply-to-selection');
+    $applyLinks.show();
+
+    var $selection = $(".selected-section");
+    // if all selections are unassigned peers enable the bulk
+    // assignment feature
+    $selectionPanel = $('#selection-panel');
+    $selectionPanel.find(".summary").replaceWith('<div class="summary">' + $selection.size() + ' sections selected.</div>');
+    if ($selection.size() > 0) {
+        $selectionPanel.find(".summary").replaceWith('<div class="summary">' + $selection.size() + ' sections selected.</div>');
+        $selectionPanel.show();
+    } else {
+        $selectionPanel.hide();
+    }
+
+    if (areUnassignedPeers($selection)) {
+        $selectionPanel.find("#assign-selection").prop('disabled', false)
+    } else {
+        $selectionPanel.find("#assign-selection").prop('disabled', true)
+    }
+}
+
+function hideSelectionOptions() {
+    $('.apply-to-selection').hide();
+    $('#selection-panel').hide();
+}
+
+function areUnassignedPeers($selection) {
+    var parentId;
+    for (var i = 0; i < $selection.size(); i ++) {
+        var $current = $($selection.get(i));
+        var currentParentId = $current.parent().attr('id');
+        var type = getPartType($current);
+        if ('UNASSIGNED' != type) {
+            console.log("Selection " + i +  " is " + type + ".");
+            return false;
+        } else {
+            if (!parentId) {
+                parentId = currentParentId;
+            } else if (parentId != currentParentId) {
+                console.log("Selection " + i + " has a different parent type than earlier items.");
+                return false;
+            }
+        }
+    }
+    return $selection.size() > 0;
 }
 
 function addToolbarForUnassigned(div) {
@@ -733,6 +866,8 @@ function replaceDocumentElement(htmlFragment) {
     markUpDiv($('#' + id).find("div.ASSIGNED"));
     markUpDiv($('#' + id).find("div.UNASSIGNED"));
     markUpDiv($('#' + id).find("div.UNASSIGNED_TABLE"));
+
+    displaySelectionOptions();
 }
 
 function getPartType(jquery) {

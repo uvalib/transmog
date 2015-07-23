@@ -349,6 +349,20 @@ public class FindingAid {
 
     @POST
     @Produces(MediaType.TEXT_XML)
+    @Path("/{id: [^/]*}/batch-apply")
+    public Response batchInsertParent(@PathParam("id") final String findingAidId, @QueryParam("partId") final List<String> partIds, @QueryParam("type") final List<String> types) throws IOException {
+        final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
+        Element parentElement = doc.getRootElement().findById(partIds.get(0)).getParent();
+        for (String partId : partIds) {
+            final Element element = doc.getRootElement().findById(partId);
+            element.assignNewPath(new edu.virginia.lib.findingaid.structure.Path(types));
+        }
+        DocumentStore.getDocumentStore().saveDocument(doc);
+        return Response.ok().type(MediaType.TEXT_HTML_TYPE).entity(parentElement.printTreeXHTML().toString()).build();
+    }
+
+    @POST
+    @Produces(MediaType.TEXT_XML)
     @Path("/{id: [^/]*}/{partId: [^/]*}/new")
     public Response insertNewChild(@PathParam("id") final String findingAidId, @PathParam("partId") final String partId, @QueryParam("index") final int index) throws IOException {
         final Document doc = DocumentStore.getDocumentStore().getDocument(findingAidId);
