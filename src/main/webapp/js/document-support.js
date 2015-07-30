@@ -504,18 +504,18 @@ function hideSelectionOptions() {
 }
 
 function areUnassignedPeers($selection) {
-    var parentId;
+    var parentType;
     for (var i = 0; i < $selection.size(); i ++) {
         var $current = $($selection.get(i));
-        var currentParentId = $current.parent().attr('id');
+        var currentParentType = getPartType($current.parent());
         var type = getPartType($current);
         if ('UNASSIGNED' != type) {
             console.log("Selection " + i +  " is " + type + ".");
             return false;
         } else {
-            if (!parentId) {
-                parentId = currentParentId;
-            } else if (parentId != currentParentId) {
+            if (!parentType) {
+                parentType = currentParentType;
+            } else if (parentType != currentParentType) {
                 console.log("Selection " + i + " has a different parent type than earlier items.");
                 return false;
             }
