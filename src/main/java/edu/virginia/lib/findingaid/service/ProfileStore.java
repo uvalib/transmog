@@ -14,7 +14,6 @@ public class ProfileStore {
 
     public ProfileStore() throws IOException, JAXBException {
         profileList = new ArrayList<Profile>();
-        profileList.add(XmlSerializedProfile.loadProfile(getClass().getClassLoader().getResourceAsStream("uvaead-schema.xml")));
         profileList.add(XmlSerializedProfile.loadProfile(getClass().getClassLoader().getResourceAsStream("modern-library-tei.xml")));
     }
 

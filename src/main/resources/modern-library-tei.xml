@@ -6,6 +6,66 @@
   <rootNodeTypeId>TEI</rootNodeTypeId>
   <rules>
     <rule>
+      <description>This is the pattern for the file title.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline" position="first">MODERN LIBRARY SERIES.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="firstline" path="TITLE" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>This is the pattern for the date heading.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="year">\d\d\d\d</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="year" path="HEAD" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>This is the pattern for the season heading.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="season">Spring</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="season" path="HEAD" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        A rule to match the "Titles sought, suggested, declined" section.
+        
+        For other sections, we use lenghts longer than 20 characters to differentiate
+        headers from paragraphs... since this title is longer, we must apply this rule first or
+        it'll get swallowed up by the previous section.
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Titles sought, suggested, declined\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="TITLES_S_S_D">
+          <assign matchedId="head" path="HEAD"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
       <description>
         Matches a section that has a paragraph with just "General" followed by
         any number of paragraphs with 20 or more characters in them.  The first
@@ -76,9 +136,8 @@
       </description>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Title page\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">.*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="delimiter">Binding\s*</elementmatch>
+          <elementmatch type="pattern" id="head">Title [Pp]age\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" inverse="true" id="paragraph">Binding\s*</elementmatch>
         </block>
       </match>
       <action>
@@ -127,12 +186,12 @@
       <description/>
       <match>
         <block>
-          <elementmatch type="pattern" id="head">Jackets?\s*</elementmatch>
+          <elementmatch type="pattern" id="head">Christmas gift box\s*</elementmatch>
           <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
         </block>
       </match>
       <action>
-        <assignblock path="JACKET">
+        <assignblock path="CHRISTMAS_GIFT_BOX">
           <assign matchedId="head" path="HEAD"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
@@ -163,21 +222,6 @@
       </match>
       <action>
         <assignblock path="PRICE">
-          <assign matchedId="head" path="HEAD"/>
-          <assign matchedId="paragraph" path="PARAGRAPH"/>
-        </assignblock>
-      </action>
-    </rule>
-    <rule>
-      <description/>
-      <match>
-        <block>
-          <elementmatch type="pattern" id="head">Titles sought, suggested, declined\s*</elementmatch>
-          <elementmatch qualifier="+" type="pattern" id="paragraph">.{20,}</elementmatch>
-        </block>
-      </match>
-      <action>
-        <assignblock path="TITLES_S_S_D">
           <assign matchedId="head" path="HEAD"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
@@ -219,7 +263,25 @@
           <assign matchedId="head" capturingGroup="7" path="METADATA/ML_NUMBER"/>
           <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
-          
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        The text of the Jacket section is hard to generalize, 
+        so we match it dead last and include anything unmatched 
+        after it.  In effect, it will be delimited by other matches.
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="head">Jackets?\s*</elementmatch>
+          <elementmatch qualifier="+" type="pattern" id="paragraph">.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="JACKET">
+          <assign matchedId="head" path="HEAD"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
     </rule>
@@ -244,6 +306,7 @@
       <canHaveChild>DATING_KEYS</canHaveChild>
       <canHaveChild>TITLES_S_S_D</canHaveChild>
       <canHaveChild>DISCONTINUED_TITLES</canHaveChild>
+      <canHaveChild>CHRISTMAS_GIFT_BOX</canHaveChild>
       <canHaveChild>BOOK</canHaveChild>
       <canHaveChild>HEAD</canHaveChild>
       <canHaveChild>PARAGRAPH</canHaveChild>
@@ -345,6 +408,14 @@
     <nodeType>
       <id>DISCONTINUED_TITLES</id>
       <label>Discontinued titles</label>
+      <description />
+      <isTextNode>false</isTextNode>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>CHRISTMAS_GIFT_BOX</id>
+      <label>Christmas Gift Box</label>
       <description />
       <isTextNode>false</isTextNode>
       <canHaveChild>HEAD</canHaveChild>
