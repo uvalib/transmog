@@ -126,6 +126,20 @@ public class Document {
     public int getUnassignedElementCount() {
        return getElementCount("^(\\Q" + profile.getUnassignedType().getId() + "\\E)|(\\Q" + profile.getTableType().getId() +  "\\E)$");
     }
+    
+    public boolean isAssignedAfterType(final String type, int count) {
+        int found = 0;
+        for (Element el : rootEl.children) {
+            if (found >= count) {
+                if (el.isUnassigned()) {
+                    return false;
+                }
+            } else if (el.getType().getId().equals(type)) {
+                found ++;
+            }
+        }
+        return found >= count;
+    }
 
     public int getElementCount(String typeIdPattern) {
         int count = 0;

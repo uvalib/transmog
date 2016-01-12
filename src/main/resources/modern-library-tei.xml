@@ -9,7 +9,33 @@
       <description>This is the pattern for the file title.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="firstline" position="first">MODERN LIBRARY SERIES.*</elementmatch>
+          <elementmatch type="pattern" id="firstline" position="first">MODERN LIBRARY( SERIES)?.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="firstline" path="TITLE" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>This is the pattern for the file title.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline" position="first">Modern Library Series.*</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock>
+          <assign matchedId="firstline" path="TITLE" />
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>This is the pattern for the file title.</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="firstline" position="first">Modern Library.*</elementmatch>
         </block>
       </match>
       <action>
@@ -22,7 +48,7 @@
       <description>This is the pattern for the date heading.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="year">\d\d\d\d</elementmatch>
+          <elementmatch type="pattern" id="year">(Fall )?\d\d\d\d</elementmatch>
         </block>
       </match>
       <action>
@@ -35,7 +61,7 @@
       <description>This is the pattern for the season heading.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="season">Spring</elementmatch>
+          <elementmatch type="pattern" id="season">(Spring)|(Fall)</elementmatch>
         </block>
       </match>
       <action>
@@ -232,7 +258,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">Discontinued( titles)?\s*</elementmatch>
-          <elementmatch type="pattern" id="paragraph" qualifier="+">(None\.)|(.*\(\d\d\d\d\))</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+">(None\.)|(.*\(\d\d\d\d\)).?</elementmatch>
         </block>
       </match>
       <action>
@@ -246,8 +272,26 @@
       <description/>
       <match>
         <block>
+          <elementmatch type="pattern" id="head">New titles?\s*</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+">.* \d{3}</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="DISCONTINUED_TITLES">
+          <assign matchedId="head" path="HEAD"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description/>
+      <!-- THORNTON WILDER.  THE CABALA.  1929–1937.  ML 155)
+           WILLIAM FAULKNER.  ABSALOM, ABSALOM!  1951–  .  (ML 271)
+      -->
+      <match>
+        <block>
           <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
-          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  )(.+)(\.  \(ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)([\.\?!]  ?)(.+)(\.  ?\(?ML\s+)(.+)(\))\s*$</elementmatch>
           <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
         </block>
       </match>
@@ -262,6 +306,50 @@
           <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
           <assign matchedId="head" capturingGroup="7" path="METADATA/ML_NUMBER"/>
           <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Matches "EIGHT FAMOUS ELIZABETHAN PLAYS.  1932–1969.  (ML 94)"</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(\d{4}[–\-]\d{4})(\.  ?\(ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Matches "THE ARABIAN NIGHTS’ ENTERTAINMENTS.  1932–  .  (ML 201)"</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(\d\d\d\d[–\-]\s*)(\.  ?\(ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -306,6 +394,7 @@
       <canHaveChild>DATING_KEYS</canHaveChild>
       <canHaveChild>TITLES_S_S_D</canHaveChild>
       <canHaveChild>DISCONTINUED_TITLES</canHaveChild>
+      <canHaveChild>NEW_TITLES</canHaveChild>
       <canHaveChild>CHRISTMAS_GIFT_BOX</canHaveChild>
       <canHaveChild>BOOK</canHaveChild>
       <canHaveChild>HEAD</canHaveChild>
@@ -408,6 +497,14 @@
     <nodeType>
       <id>DISCONTINUED_TITLES</id>
       <label>Discontinued titles</label>
+      <description />
+      <isTextNode>false</isTextNode>
+      <canHaveChild>HEAD</canHaveChild>
+      <canHaveChild>PARAGRAPH</canHaveChild>
+    </nodeType>
+    <nodeType>
+      <id>NEW_TITLES</id>
+      <label>New titles</label>
       <description />
       <isTextNode>false</isTextNode>
       <canHaveChild>HEAD</canHaveChild>
