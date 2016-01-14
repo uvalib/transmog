@@ -50,7 +50,7 @@ public class Document {
 
     public void serialize(OutputStream os) throws XMLStreamException {
         XMLEventFactory f = XMLEventFactory.newInstance();
-        XMLEventWriter w = XMLOutputFactory.newFactory().createXMLEventWriter(os);
+        XMLEventWriter w = XMLOutputFactory.newFactory().createXMLEventWriter(os, "UTF-8");
         w.add(f.createStartDocument());
         w.add(f.createStartElement("", "", "document"));
         w.add(f.createCharacters("\n"));
