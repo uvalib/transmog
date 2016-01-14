@@ -13,7 +13,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <poi.version>3.10.1</poi.version>
     <jersey.version>2.15</jersey.version>
-    <jetty.version>9.0.6.v20130930</jetty.version>
+    <jetty.version>9.2.3.v20140905</jetty.version>
   </properties>
 
   <dependencyManagement>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.8.1</version>
+      <version>4.11</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -70,8 +70,17 @@
       <groupId>org.eclipse.jgit</groupId>
       <artifactId>org.eclipse.jgit</artifactId>
       <version>3.7.1.201504261725-r</version>
+      <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
-
     <dependency>
       <groupId>org.glassfish.jersey.containers</groupId>
       <artifactId>jersey-container-servlet</artifactId>
@@ -89,13 +98,11 @@
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
       <version>${jetty.version}</version>
-      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-webapp</artifactId>
       <version>${jetty.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -147,6 +154,27 @@
           </webApp>
           <war>${project.build.directory}/${project.build.finalName}.war</war>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.simplericity.jettyconsole</groupId>
+        <artifactId>jetty-console-maven-plugin</artifactId>
+        <version>1.56</version>
+        <executions>
+          <execution>
+            <goals>
+                <goal>createconsole</goal>
+            </goals>
+            <configuration>
+              <backgroundImage>${basedir}/resources/background.jpg</backgroundImage>
+              <destinationFile>${project.build.directory}${file.separator}${project.artifactId}-${project.version}.jar</destinationFile>
+              <additionalDependencies>
+                <additionalDependency>
+                  <artifactId>jetty-console-log4j-plugin</artifactId>
+                </additionalDependency>
+              </additionalDependencies>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
