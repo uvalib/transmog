@@ -26,6 +26,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -141,17 +142,17 @@ public class XmlSerializedProfile extends Profile {
                 e.printStackTrace();
             }
             baos.toString();
-            DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-            f.setNamespaceAware(true);
-            DocumentBuilder b = f.newDocumentBuilder();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            t.transform(new StreamSource(new ByteArrayInputStream(baos.toByteArray())), new StreamResult(out));
-            return out.toString();
+            t.transform(new StreamSource(new StringReader(baos.toString("UTF-8"))), new StreamResult(out));
+            return out.toString("UTF-8");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
+    /*
+     * 
+     */
     private void validate() {
         for (NodeType nodeType : this.getAssignedNodeTypes()) {
             nodeType.possibleChildren();

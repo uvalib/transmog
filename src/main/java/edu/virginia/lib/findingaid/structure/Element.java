@@ -407,7 +407,7 @@ public class Element implements Serializable {
 
     public void writeOutXML(OutputStream os) throws XMLStreamException {
         XMLOutputFactory f = XMLOutputFactory.newFactory();
-        XMLEventWriter w = f.createXMLEventWriter(os);
+        XMLEventWriter w = f.createXMLEventWriter(os, "UTF-8");
         emitRawXMLEvents(w);
         w.close();
     }
