@@ -273,11 +273,11 @@
       <match>
         <block>
           <elementmatch type="pattern" id="head">New titles?\s*</elementmatch>
-          <elementmatch type="pattern" id="paragraph" qualifier="+">.* \d{3}</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+">.* \(?\d+\)?</elementmatch>
         </block>
       </match>
       <action>
-        <assignblock path="DISCONTINUED_TITLES">
+        <assignblock path="NEW_TITLES">
           <assign matchedId="head" path="HEAD"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
@@ -291,7 +291,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
-          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)([\.\?!]  ?)(.+)(\.  ?\(?ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)([\.\?!]  ?)(.+)(\.  ?\(?ML\s+)([0-9]+)A?(\))\s*$</elementmatch>
           <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
         </block>
       </match>
@@ -315,7 +315,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
-          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(\d{4}[–\-]\d{4})(\.  ?\(ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(\d{4}[–\-]\d{4})(\.  ?\(ML\s+)([0-9]+)(\))\s*$</elementmatch>
           <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
         </block>
       </match>
@@ -337,7 +337,7 @@
       <match>
         <block>
           <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
-          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(\d\d\d\d[–\-]\s*)(\.  ?\(ML\s+)(.+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(\d\d\d\d[–\-]\s*)(\.  ?\(ML\s+)([0-9]+)(\))\s*$</elementmatch>
           <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
         </block>
       </match>
@@ -350,6 +350,89 @@
           <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
           <assign matchedId="head" capturingGroup="5" path="METADATA/ML_NUMBER"/>
           <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <!-- TODO COMPLETE RULE BELOW -->
+    <rule>
+      <description>Matches "WILLIAM SHAKESPEARE.  THE TRAGEDIES OF SHAKESPEARE.  1 vol.  1943–1947.  (ML 1);  2 vols.  1947–1971.  (ML 1, 1A; ML 2, 3)" and "WILLIAM SHAKESPEARE.  THE HISTORIES AND POEMS OF SHAKESPEARE.  1 vol.  1943–1947.  (ML 3);  2 vols.  1947–1971.  (ML 3, 3A; ML 6, 7)"</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  .*)(\d\d\d\d[–\-](\d\d\d\d)?)(\s*\.  ?\(ML )(\d+)(\);  2 vols.  1947–1971.  \(ML \d, \dA; ML )(\d)(, )(\d)(\)*)$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="11" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="12" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="13" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Matches "HENRIK IBSEN.  SIX PLAYS.  1957–1973.  (ML 6; ML 305)" and "O. HENRY.  THE BEST SHORT STORIES OF O. HENRY.  1945–  .  (ML 4; ML 26)" and "KATHERINE ANNE PORTER.  FLOWERING JUDAS AND OTHER STORIES.  1940–1950; 1953–1970.  (ML 88; ML 284)"</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  )(\d\d\d\d[–\-](\d\d\d\d)?)((; )(\d\d\d\d[–\-](\d\d\d\d)?))?(\s*\.  ?\(ML\s+)(\d+)(; ML )(\d+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="11" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="12" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="13" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="14" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="15" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>Matches "BENVENUTO CELLINI.  AUTOBIOGRAPHY OF BENVENUTO CELLINI.  1927–1970; 1985–1991.  (ML 3; 150)"</description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  )(\d\d\d\d[–\-]\d\d\d\d; \d\d\d\d[–\-]\d\d\d\d)(\.  ?\(ML\s+)([\d]+)(; )(\d+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/TEXT"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
