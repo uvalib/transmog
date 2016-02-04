@@ -26,6 +26,7 @@ public class BatchConvert {
         
         Pattern filenamePattern = Pattern.compile("(\\d{4}).*(-\\d{6})?\\.docx");
         DocumentConverter c = new DocumentConverter();
+        boolean overwrite = true;
         
         for (File f : sourceDir.listFiles()) {
             System.out.println(f.getName());
@@ -33,7 +34,7 @@ public class BatchConvert {
             if (m.matches()) {
                 final String year = m.group(1);
                 File output = new File(outputDir, year + ".xml");
-                if (output.exists()) {
+                if (output.exists() && !overwrite) {
                     System.out.println("  -- converted (prior to this invocation)");
                 } else {
                     Document doc = c.convertWordDoc(f, ProfileStore.getProfileStore().getDefaultProfile(), f.getName());

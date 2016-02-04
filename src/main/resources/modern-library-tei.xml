@@ -284,6 +284,217 @@
       </action>
     </rule>
     <rule>
+      <description>
+        Matches "W. H. AUDEN.  SELECTED POETRY OF W. H. AUDEN.  1959–1971. 2nd ed. 1972– . (ML 160)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  )(\d+[-–]\d+)(\. +.* .\(ML\s+)(\d+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    
+    <rule>
+      <description>
+        Matches "JAMES BOSWELL. THE LIFE OF SAMUEL JOHNSON. Abridged by Bergen Evans. 1952–1970. (ML 282)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\. +)(.+)(\. +Abridged by )(.+)(\. +)(\d+[-–]\d+)(\. +\(ML\s+)(\d+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        Matches "ROBERT BIERSTEDT, ed. THE MAKING OF SOCIETY. Rev. ed. 1959–1974. (ML 183)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(, +ed\. +)(.+)(\. +)(\d+[-–]\d+)(\. +\(ML\s+)(\d+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        Matches 
+        "WILLIAM SHAKESPEARE. THE TRAGEDIES OF SHAKESPEARE. 1 vol.              1943–1947. (ML 1);   2 vols.  1947–1971.  (ML 1, 1A; ML 2, 3)",
+        "WILLIAM SHAKESPEARE. THE COMEDIES OF SHAKESPEARE. 1 vol.               1943–1947. (ML 2);   2 vols.  1947–1971.  (ML 2, 2A; ML 4, 5)",
+        "WILLIAM SHAKESPEARE. THE HISTORIES AND POEMS OF SHAKESPEARE. 1 vol.    1943–1947. (ML 3);   2 vols.  1947–1971.  (ML 3, 3A; ML 6, 7)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\. +)(.+)(\.  1 vol\. +)(\d\d\d\d[–\-](\d\d\d\d)?)(\s*\.  ?\(ML )(\d+)(\);  2 vols.  \d+–\d+.  \(ML \d, \dA; ML )(\d)(, )(\d)(\)*)$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="11" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="12" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="13" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    
+    <rule>
+      <description>
+        Matches "CLARA THOMPSON, MILTON MAZER, and EARL WITENBERG, eds. AN OUTLINE OF PSYCHOANALYSIS. Rev. ed. 1955–1971. (ML 66)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(, +)(.+)(, and )(.+)(, eds\. +)(.+)(\. +)(\d+\–\d+)(\. +\(ML )(\d+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="11" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="12" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        Matches "GARDNER MURPHY, ed. AN OUTLINE OF ABNORMAL PSYCHOLOGY. 1929–1954. GARDNER MURPHY and ARTHUR J. BACHRACH, eds. AN OUTLINE OF ABNORMAL PSYCHOLOGY. Rev. ed. 1954–1970. (ML 152)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(, ed\.  ?)(.+)(\.  ?)(\d\d\d\d–\d\d\d\d)(\.  ?)(.+)( and )(.+)(, eds.  ?)(.+)(\.  ?)(\d\d\d\d–\d\d\d\d)(\.  ?\(ML\s+)([0-9]+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/EDITOR"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="11" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="12" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="13" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="14" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="15" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="16" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
+      <description>
+        Matches "SAMUEL BUTLER. EREWHON. 1927–1932. EREWHON &amp; EREWHON REVISITED. 1933–1970. (ML 136)",
+        "LILLIAN HELLMAN. FOUR PLAYS. 1942–1960. SIX PLAYS. 1960–1971. (ML 223)", and 
+        "GARDNER MURPHY, ed. AN OUTLINE OF ABNORMAL PSYCHOLOGY. 1929–1954. GARDNER MURPHY and ARTHUR J. BACHRACH, eds. AN OUTLINE OF ABNORMAL PSYCHOLOGY. Rev. ed. 1954–1970. (ML 152)"
+      </description>
+      <match>
+        <block>
+          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
+          <elementmatch type="pattern" id="head">^\s*(.+)(\.  ?)(.+)(\.  ?)(\d\d\d\d–\d\d\d\d)(\.  ?)(.+)(\.  ?)(\d\d\d\d–\d\d\d\d)(\.  ?\(ML\s+)([0-9]+)(\))\s*$</elementmatch>
+          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
+        </block>
+      </match>
+      <action>
+        <assignblock path="BOOK">
+          <assign matchedId="number" path="NUMBER"/>
+          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
+          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="7" path="METADATA/TITLE"/>
+          <assign matchedId="head" capturingGroup="8" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="9" path="METADATA/DATE_RANGE"/>
+          <assign matchedId="head" capturingGroup="10" path="METADATA/TEXT"/>
+          <assign matchedId="head" capturingGroup="11" path="METADATA/ML_NUMBER"/>
+          <assign matchedId="head" capturingGroup="12" path="METADATA/TEXT"/>
+          <assign matchedId="paragraph" path="PARAGRAPH"/>
+        </assignblock>
+      </action>
+    </rule>
+    <rule>
       <description/>
       <!-- THORNTON WILDER.  THE CABALA.  1929–1937.  ML 155)
            WILLIAM FAULKNER.  ABSALOM, ABSALOM!  1951–  .  (ML 271)
@@ -350,35 +561,6 @@
           <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
           <assign matchedId="head" capturingGroup="5" path="METADATA/ML_NUMBER"/>
           <assign matchedId="head" capturingGroup="6" path="METADATA/TEXT"/>
-          <assign matchedId="paragraph" path="PARAGRAPH"/>
-        </assignblock>
-      </action>
-    </rule>
-    <!-- TODO COMPLETE RULE BELOW -->
-    <rule>
-      <description>Matches "WILLIAM SHAKESPEARE.  THE TRAGEDIES OF SHAKESPEARE.  1 vol.  1943–1947.  (ML 1);  2 vols.  1947–1971.  (ML 1, 1A; ML 2, 3)" and "WILLIAM SHAKESPEARE.  THE HISTORIES AND POEMS OF SHAKESPEARE.  1 vol.  1943–1947.  (ML 3);  2 vols.  1947–1971.  (ML 3, 3A; ML 6, 7)"</description>
-      <match>
-        <block>
-          <elementmatch type="pattern" id="number">^\s*\d+\s*$</elementmatch>
-          <elementmatch type="pattern" id="head">^\s*(.+)(\.  )(.+)(\.  .*)(\d\d\d\d[–\-](\d\d\d\d)?)(\s*\.  ?\(ML )(\d+)(\);  2 vols.  1947–1971.  \(ML \d, \dA; ML )(\d)(, )(\d)(\)*)$</elementmatch>
-          <elementmatch type="pattern" id="paragraph" qualifier="+" inverse="true">^\s*\d+\s*$</elementmatch>
-        </block>
-      </match>
-      <action>
-        <assignblock path="BOOK">
-          <assign matchedId="number" path="NUMBER"/>
-          <assign matchedId="head" capturingGroup="1" path="METADATA/AUTHOR"/>
-          <assign matchedId="head" capturingGroup="2" path="METADATA/TEXT"/>
-          <assign matchedId="head" capturingGroup="3" path="METADATA/TITLE"/>
-          <assign matchedId="head" capturingGroup="4" path="METADATA/TEXT"/>
-          <assign matchedId="head" capturingGroup="5" path="METADATA/DATE_RANGE"/>
-          <assign matchedId="head" capturingGroup="7" path="METADATA/TEXT"/>
-          <assign matchedId="head" capturingGroup="8" path="METADATA/ML_NUMBER"/>
-          <assign matchedId="head" capturingGroup="9" path="METADATA/TEXT"/>
-          <assign matchedId="head" capturingGroup="10" path="METADATA/ML_NUMBER"/>
-          <assign matchedId="head" capturingGroup="11" path="METADATA/TEXT"/>
-          <assign matchedId="head" capturingGroup="12" path="METADATA/ML_NUMBER"/>
-          <assign matchedId="head" capturingGroup="13" path="METADATA/TEXT"/>
           <assign matchedId="paragraph" path="PARAGRAPH"/>
         </assignblock>
       </action>
@@ -628,6 +810,7 @@
       <description /> 
       <isTextNode>false</isTextNode>
       <canHaveChild>AUTHOR</canHaveChild>
+      <canHaveChild>EDITOR</canHaveChild>
       <canHaveChild>TEXT</canHaveChild>
       <canHaveChild>TITLE</canHaveChild>
       <canHaveChild>DATE_RANGE</canHaveChild>
@@ -641,6 +824,12 @@
     </nodeType>
     <nodeType>
       <id>AUTHOR</id>
+      <label>Author</label>
+      <description />
+      <isTextNode>true</isTextNode>
+    </nodeType>
+    <nodeType>
+      <id>EDITOR</id>
       <label>Author</label>
       <description />
       <isTextNode>true</isTextNode>
