@@ -61,7 +61,7 @@
       <description>This is the pattern for the season heading.</description>
       <match>
         <block>
-          <elementmatch type="pattern" id="season">(Spring)|(Fall)</elementmatch>
+          <elementmatch type="pattern" id="season">\s*(Spring)|(Fall)\s*</elementmatch>
         </block>
       </match>
       <action>
