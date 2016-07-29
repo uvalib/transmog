@@ -345,7 +345,7 @@
     </nodeType>
     <nodeType>
       <id>DSC_HEAD</id>
-      <label>Heading for Subordinate Components (not yet mapped to EAD)</label>
+      <label>Heading for Subordinate Components</label>
       <description></description>
       <isTextNode>true</isTextNode>
       <canHaveChild>TEXT</canHaveChild>

@@ -54,6 +54,10 @@
 
   <xsl:template match="*" mode="#all" priority="-1" />
 
+  <xsl:template match="DSC_HEAD" mode="DSC">
+      <head><xsl:apply-templates select="*" mode="HEAD" /></head>
+  </xsl:template>
+
   <xsl:template match="SERIES" mode="DSC">
     <c01 level="series">
       <did>
