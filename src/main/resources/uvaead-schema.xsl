@@ -188,15 +188,15 @@
   </xsl:template>
   
   <xsl:template match="BOX" mode="DID">
-    <container label="Text" type="box"><xsl:attribute name="id" select="concat('transmogid_', @id)" /><xsl:apply-templates select="*" mode="BOX" /></container>
+    <container label="Box" type="box"><xsl:attribute name="id" select="concat('transmogid_', @id)" /><xsl:apply-templates select="*" mode="BOX" /></container>
   </xsl:template>
   
   <xsl:template match="BOXFOLDER" mode="DID">
-    <container label="Text" type="box-folder"><xsl:apply-templates select="*" mode="BOXFOLDER" /></container>
+    <container label="Box:Folder" type="box-folder"><xsl:apply-templates select="*" mode="BOXFOLDER" /></container>
   </xsl:template>
   
   <xsl:template match="FOLDER" mode="DID-LAST">
-    <container label="Text" type="folder">
+    <container label="Folder" type="folder">
       <xsl:if test="count(../BOX) > 1">
         <xsl:variable name="text">
           <xsl:for-each select="../UNITTITLE//text()">
